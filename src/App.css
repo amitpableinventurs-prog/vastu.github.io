@@ -1077,3 +1077,40 @@ button,
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
+
+.lead-form select,
+.lead-form textarea {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+  color: var(--white);
+  font: 14px/1.5 var(--sans);
+  min-height: 44px;
+  outline: 0;
+  padding: 11px 12px;
+  width: 100%;
+}
+
+.lead-form select:focus,
+.lead-form textarea:focus { border-color: var(--gold-light); }
+.lead-form select option { background: #171713; color: var(--white); }
+.lead-form textarea { min-height: 86px; resize: vertical; }
+.consent-row { align-items: start; display: flex; gap: 9px; grid-column: 1 / -1; }
+.consent-row input { accent-color: var(--gold-light); flex: 0 0 16px; height: 16px; margin: 3px 0 0; min-height: 16px; width: 16px; }
+.consent-row label { color: rgba(255,255,255,.67); cursor: pointer; font-size: 10px; line-height: 1.55; }
+.form-error { border-left: 2px solid #d77c69; color: #f0b3a5; font-size: 12px; grid-column: 1 / -1; line-height: 1.55; padding-left: 10px; }
+.form-error a { color: var(--gold-light); }
+.form-submit:disabled { cursor: wait; opacity: .72; }
+.lead-form-compact { grid-template-columns: 1fr; }
+.lead-form-compact .consent-row,
+.lead-form-compact .form-error,
+.lead-form-compact .form-submit,
+.lead-form-compact .form-note { grid-column: 1; }
+
+@media (max-width: 760px) {
+  .sticky-actions { transition: transform 180ms ease; }
+
+  .lead-form select,
+  .lead-form textarea { font-size: 13px; }
+  .consent-row label { font-size: 11px; }
+}

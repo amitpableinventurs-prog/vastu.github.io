@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import './App.css'
 
 import heroImage from './assets/property/hero.jpg'
@@ -19,6 +19,7 @@ import headerImageTen from './assets/property/vc-10.jpg'
 import headerImageEleven from './assets/property/vc-11.jpg'
 
 const headerImages = [headerImageNine, headerImageTen, headerImageEleven]
+const leadFormEndpoint = 'https://formsubmit.co/ajax/vasturealty.indore@gmail.com'
 
 const photos = {
   hero: heroImage,
@@ -112,33 +113,83 @@ function Icon({ name, size = 20 }) {
   )
 }
 
-function LeadForm({ compact = false, buttonLabel = 'SEND REQUEST' }) {
-  const [sent, setSent] = useState(false)
+function LeadForm({ compact = false, buttonLabel = 'SEND REQUEST', source = 'Hero enquiry form', onFocusChange }) {
+  const formId = useId().replaceAll(':', '')
+  const [status, setStatus] = useState('idle')
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
-    setSent(true)
+    setStatus('sending')
+
+    const formData = new FormData(event.currentTarget)
+    const submission = Object.fromEntries(formData.entries())
+    submission._subject = `Vastu City enquiry: ${submission.name}`
+    submission._template = 'table'
+
+    try {
+      const response = await fetch(leadFormEndpoint, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submission),
+      })
+      const result = await response.json()
+      if (!response.ok || !result.success) throw new Error('Lead delivery failed')
+      setStatus('sent')
+      onFocusChange?.(false)
+    } catch {
+      setStatus('error')
+    }
   }
 
-  if (sent) {
+  if (status === 'sent') {
     return (
-      <div className={`form-success${compact ? ' form-success-compact' : ''}`} role="status">
+      <div className={`form-success${compact ? ' form-success-compact' : ''}`} role="status" aria-live="polite">
         <span className="success-mark"><Icon name="check" size={18} /></span>
-        <div><strong>Thank you for reaching out.</strong><p>A project advisor will be in touch shortly.</p></div>
+        <div><strong>Thank you for reaching out.</strong><p>Your enquiry has been sent to our project team.</p></div>
       </div>
     )
   }
 
   return (
-    <form className={`lead-form${compact ? ' lead-form-compact' : ''}`} onSubmit={handleSubmit}>
-      <label className="sr-only" htmlFor={compact ? 'modal-name' : 'hero-name'}>Full name</label>
-      <input id={compact ? 'modal-name' : 'hero-name'} name="name" autoComplete="name" placeholder="Full name" required />
-      <label className="sr-only" htmlFor={compact ? 'modal-phone' : 'hero-phone'}>Phone number</label>
-      <input id={compact ? 'modal-phone' : 'hero-phone'} name="phone" type="tel" autoComplete="tel" placeholder="Phone number" pattern="[0-9+() -]{10,}" title="Enter a valid phone number" required />
-      <label className="sr-only" htmlFor={compact ? 'modal-email' : 'hero-email'}>Email address</label>
-      <input id={compact ? 'modal-email' : 'hero-email'} name="email" type="email" autoComplete="email" placeholder="Email address" required />
-      <button className="button button-gold form-submit" type="submit">{buttonLabel}<Icon name="arrow" size={17} /></button>
-      <p className="form-note">By submitting, you agree to be contacted by Happy Move about Vastu City Rameshwaram.</p>
+    <form
+      className={`lead-form${compact ? ' lead-form-compact' : ''}`}
+      onSubmit={handleSubmit}
+      onFocus={() => onFocusChange?.(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) onFocusChange?.(false)
+      }}
+    >
+      <input type="hidden" name="project" value="Vastu City Rameshwaram, Indore" />
+      <input type="hidden" name="lead_source" value={source} />
+      <label className="sr-only" htmlFor={`${formId}-name`}>Full name</label>
+      <input id={`${formId}-name`} name="name" autoComplete="name" placeholder="Full Name" required />
+      <label className="sr-only" htmlFor={`${formId}-phone`}>Phone number</label>
+      <input id={`${formId}-phone`} name="phone" type="tel" autoComplete="tel" placeholder="Phone Number" pattern="[0-9+() -]{10,}" title="Enter a valid phone number" required />
+      <label className="sr-only" htmlFor={`${formId}-email`}>Email address</label>
+      <input id={`${formId}-email`} name="email" type="email" autoComplete="email" placeholder="Email Address" required />
+      {compact && <>
+        <label className="sr-only" htmlFor={`${formId}-interest`}>What can we help you with?</label>
+        <select id={`${formId}-interest`} name="enquiry_type" defaultValue="Pricing and availability">
+          <option>Pricing and availability</option>
+          <option>Book a site visit</option>
+          <option>Request a brochure</option>
+          <option>Other enquiry</option>
+        </select>
+        <label className="sr-only" htmlFor={`${formId}-message`}>Message (optional)</label>
+        <textarea id={`${formId}-message`} name="message" placeholder="Message (optional)" rows="3" />
+      </>}
+      <div className="consent-row">
+        <input id={`${formId}-consent`} name="consent" type="checkbox" value="Agreed to be contacted" required />
+        <label htmlFor={`${formId}-consent`}>I agree to be contacted by Happy Move about this enquiry.</label>
+      </div>
+      {status === 'error' && <p className="form-error" role="alert">We couldn’t send this just now. Please try again or <a href="mailto:vasturealty.indore@gmail.com">email our team</a>.</p>}
+      <button className="button button-gold form-submit" type="submit" disabled={status === 'sending'}>
+        {status === 'sending' ? 'SENDING...' : buttonLabel}<Icon name="arrow" size={17} />
+      </button>
+      <p className="form-note">Your details are shared only with our project advisor for this enquiry.</p>
     </form>
   )
 }
@@ -161,6 +212,7 @@ function App() {
   const [modal, setModal] = useState(null)
   const [activeHeaderImage, setActiveHeaderImage] = useState(0)
   const [headerScrolled, setHeaderScrolled] = useState(false)
+  const [leadFormFocused, setLeadFormFocused] = useState(false)
 
   useEffect(() => {
     const rotation = window.setInterval(() => {
@@ -252,7 +304,7 @@ function App() {
               <p className="eyebrow">LIMITED INVENTORY</p>
               <h2>Express Your Interest</h2>
               <p className="interest-copy">Get pricing, offers &amp; site visit slots.</p>
-              <LeadForm buttonLabel="SUBMIT" />
+              <LeadForm buttonLabel="SUBMIT" onFocusChange={setLeadFormFocused} />
             </aside>
           </div>
         </section>
@@ -406,7 +458,7 @@ function App() {
         <div className="footer-legal page-wrap"><p><strong>Disclaimer:</strong> This is the official landing page of Happy Move, an authorized channel partner for Vastu City Rameshwaram. This is not the developer's official website.<br />The contents are purely conceptual and have no legal binding. The builder reserves the right to amend layouts, plans, dimensions, elevations, colour schemes, specifications and amenities without notice. Subject to Indore jurisdiction. Images are for representation; some are artistic renders.<br />© 2026 Happy Move. All rights reserved.</p><div><a href="#top">Privacy Policy</a><a href="#top">Disclaimer</a></div></div>
       </footer>
 
-      <div className="sticky-actions" aria-label="Quick actions">
+      <div className="sticky-actions" aria-label="Quick actions" style={leadFormFocused ? { transform: 'translateY(100%)', opacity: 0, visibility: 'hidden', pointerEvents: 'none' } : undefined}>
         <button type="button" className="sticky-primary" onClick={() => openRequest('Plan your visit to Vastu City')}>REQUEST SITE VISIT</button>
         <a className="sticky-secondary" href="/vastu-city-rameshwaram-brochure.pdf" download="vastu-city-rameshwaram-brochure.pdf">DOWNLOAD BROCHURE <Icon name="download" size={16} /></a>
       </div>
@@ -426,7 +478,7 @@ function App() {
               <>
                 <p className="eyebrow">VASTU CITY RAMESHWARAM · INDORE</p><h2 id="modal-title">{modal.title}</h2>
                 <p className="modal-description">Leave your details and a Happy Move advisor will get back to you with the information you need.</p>
-                <LeadForm compact buttonLabel="SEND MY REQUEST" />
+                <LeadForm compact buttonLabel="SEND MY REQUEST" source={modal.title} onFocusChange={setLeadFormFocused} />
               </>
             )}
             {modal.kind === 'image' && <p className="image-modal-caption">{modal.title}<span>VASTU CITY RAMESHWARAM · INDORE</span></p>}
