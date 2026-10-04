@@ -1058,6 +1058,7 @@ button,
   .gallery-grid {
     grid-auto-rows: clamp(115px, 32vw, 150px);
     grid-template-rows: none;
+    gap: 16px !important;
   }
 
   .sticky-actions button,
@@ -1065,5 +1066,14 @@ button,
     font-size: 10px !important;
     min-height: 61px;
     white-space: nowrap;
+  }
+
+  /* Keep the fixed action bar from covering the last mobile content. */
+  main {
+    padding-bottom: calc(61px + env(safe-area-inset-bottom));
+  }
+
+  .sticky-actions {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
