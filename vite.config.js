@@ -11,6 +11,7 @@ export default defineConfig({
   preview: {
     host: '0.0.0.0',
     port: parseInt(process.env.PORT, 10) || 5173,
+    allowedHosts: ['vastucityrameshwaram.com'],
   },
   base: process.env.GITHUB_ACTIONS === 'true' ? '/vastu.github.io/' : '/',
   plugins: [react()],
