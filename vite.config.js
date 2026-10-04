@@ -3,6 +3,14 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    host: '0.0.0.0',
+    port: parseInt(process.env.PORT, 10) || 5173,
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: parseInt(process.env.PORT, 10) || 5173,
+  },
   base: process.env.GITHUB_ACTIONS === 'true' ? '/vastu.github.io/' : '/',
   plugins: [react()],
 })
