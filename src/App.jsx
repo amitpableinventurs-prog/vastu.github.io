@@ -19,7 +19,7 @@ import headerImageTen from './assets/property/vc-10.jpg'
 import headerImageEleven from './assets/property/vc-11.jpg'
 
 const headerImages = [headerImageNine, headerImageTen, headerImageEleven]
-const leadFormEndpoint = 'https://formsubmit.co/ajax/vasturealty.indore@gmail.com'
+const leadFormEndpoint = 'https://formsubmit.co/ajax/reethappymove19@gmail.com'
 
 const photos = {
   hero: heroImage,
@@ -185,7 +185,7 @@ function LeadForm({ compact = false, buttonLabel = 'SEND REQUEST', source = 'Her
         <input id={`${formId}-consent`} name="consent" type="checkbox" value="Agreed to be contacted" required />
         <label htmlFor={`${formId}-consent`}>I agree to be contacted by Happy Move about this enquiry.</label>
       </div>
-      {status === 'error' && <p className="form-error" role="alert">We couldn’t send this just now. Please try again or <a href="mailto:vasturealty.indore@gmail.com">email our team</a>.</p>}
+      {status === 'error' && <p className="form-error" role="alert">We couldn’t send this just now. Please try again or <a href="mailto:reethappymove19@gmail.com">email our team</a>.</p>}
       <button className="button button-gold form-submit" type="submit" disabled={status === 'sending'}>
         {status === 'sending' ? 'SENDING...' : buttonLabel}<Icon name="arrow" size={17} />
       </button>
@@ -451,7 +451,7 @@ function App() {
           <div className="footer-contact">
             <span><Icon name="badge" size={15} /> MP RERA NO: P-OTH-23-3881</span>
             <a href="https://maps.google.com/?q=Vidyasagar+School+Indore%2C+Pragati+Vihar%2C+Indore%2C+Madhya+Pradesh+452016%2C+India"><Icon name="pin" size={15} /> Vidyasagar School Indore, Pragati Vihar, Indore, Madhya Pradesh 452016, India</a>
-            <a href="mailto:vasturealty.indore@gmail.com"><Icon name="mail" size={15} /> vasturealty.indore@gmail.com</a>
+            <a href="mailto:reethappymove19@gmail.com"><Icon name="mail" size={15} /> reethappymove19@gmail.com</a>
           </div>
           <div className="footer-rera"><span>MP RERA NO.</span><strong>P-OTH-23-3881</strong><span>APPROVED PROJECT</span></div>
         </div>

@@ -1,5 +1,19 @@
 # React + Vite
 
+## Google/Gmail configuration
+
+Copy `.env.example` to `.env.local` and replace the placeholder values with the
+Google OAuth credentials from Google Cloud Console:
+
+```env
+GOOGLE_CLIENT_ID=your_client_id
+GOOGLE_CLIENT_SECRET=your_client_secret
+```
+
+Keep `GOOGLE_CLIENT_SECRET` server-side. This Vite frontend currently sends
+enquiries through FormSubmit; Gmail delivery requires a server-side OAuth
+endpoint, because a browser app must not contain the client secret.
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:
