@@ -29,8 +29,12 @@ this backend.
 
 Do not deploy `.env.local` or put the App Password in frontend build variables.
 Keep the GitHub Pages workflow disabled for the production domain if GoDaddy is
-serving the live site. Some shared hosting plans block outbound SMTP on port 465;
-if enquiries fail only on the live server, ask GoDaddy to allow it.
+serving the live site.
+
+On start the server logs one `Mail check (host:port)` line saying whether Gmail
+accepted the login, or why not. GoDaddy has been seen blocking outbound port 465
+(`connect EACCES ...:465`); if so, set `SMTP_PORT=587` and redeploy. If 587 is also
+blocked, SMTP cannot work from that host and an HTTPS email API is needed.
 
 ## Gmail configuration
 

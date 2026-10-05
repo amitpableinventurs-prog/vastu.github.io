@@ -4,12 +4,20 @@ function singleLine(value) {
   return value.replace(/[\r\n]+/g, ' ').trim()
 }
 
-export function createGmailTransport({ GMAIL_USER, GMAIL_APP_PASSWORD }) {
+// Gmail over SSL (465) by default. Some hosts block outbound 465, so SMTP_PORT=587
+// switches to STARTTLS, and SMTP_HOST points at a different SMTP server.
+export function getSmtpTarget({ SMTP_HOST, SMTP_PORT } = process.env) {
+  return { host: SMTP_HOST || 'smtp.gmail.com', port: Number.parseInt(SMTP_PORT, 10) || 465 }
+}
+
+export function createGmailTransport(env) {
+  const { host, port } = getSmtpTarget(env)
   return nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: { user: GMAIL_USER, pass: GMAIL_APP_PASSWORD.replaceAll(' ', '') },
+    host,
+    port,
+    secure: port === 465,
+    requireTLS: port !== 465,
+    auth: { user: env.GMAIL_USER, pass: env.GMAIL_APP_PASSWORD.replaceAll(' ', '') },
     connectionTimeout: 10_000,
     greetingTimeout: 10_000,
     socketTimeout: 20_000,

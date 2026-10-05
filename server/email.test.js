@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import nodemailer from 'nodemailer'
-import { sendLeadEmail, verifyMailSettings } from './email.js'
+import { createGmailTransport, getSmtpTarget, sendLeadEmail, verifyMailSettings } from './email.js'
 
 const lead = {
   name: 'Test Visitor',
@@ -71,4 +71,20 @@ test('startup check reports Gmail login failures without exposing the password',
 
 test('startup check passes when Gmail accepts the login', async () => {
   assert.deepEqual(await verifyMailSettings(env, { verify: async () => true }), { ok: true })
+})
+
+test('uses Gmail over SSL on port 465 unless told otherwise', () => {
+  assert.deepEqual(getSmtpTarget({}), { host: 'smtp.gmail.com', port: 465 })
+  const { options } = createGmailTransport(env).transporter
+  assert.equal(options.port, 465)
+  assert.equal(options.secure, true)
+})
+
+test('SMTP_PORT=587 switches to STARTTLS and SMTP_HOST changes the server', () => {
+  assert.deepEqual(getSmtpTarget({ SMTP_PORT: '587' }), { host: 'smtp.gmail.com', port: 587 })
+  const { options } = createGmailTransport({ ...env, SMTP_PORT: '587', SMTP_HOST: 'mail.example.com' }).transporter
+  assert.equal(options.host, 'mail.example.com')
+  assert.equal(options.port, 587)
+  assert.equal(options.secure, false)
+  assert.equal(options.requireTLS, true)
 })
