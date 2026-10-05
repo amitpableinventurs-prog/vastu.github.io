@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import nodemailer from 'nodemailer'
-import { sendLeadEmail } from './email.js'
+import { sendLeadEmail, verifyMailSettings } from './email.js'
 
 const lead = {
   name: 'Test Visitor',
@@ -53,4 +53,22 @@ test('reports a clear error when Gmail settings are missing', async () => {
     sendLeadEmail(lead, { LEADS_TO_EMAIL: 'leads@example.com' }),
     /not configured on this server/,
   )
+})
+
+test('startup check reports missing settings by name without contacting Gmail', async () => {
+  const result = await verifyMailSettings({ LEADS_TO_EMAIL: 'leads@example.com' })
+  assert.equal(result.ok, false)
+  assert.match(result.reason, /GMAIL_USER, GMAIL_APP_PASSWORD/)
+})
+
+test('startup check reports Gmail login failures without exposing the password', async () => {
+  const failing = { verify: async () => { throw new Error('Invalid login: 535-5.7.8 Username and\nPassword not accepted') } }
+  const result = await verifyMailSettings(env, failing)
+  assert.equal(result.ok, false)
+  assert.match(result.reason, /535-5\.7\.8 Username and Password not accepted/)
+  assert.doesNotMatch(result.reason, /abcd|efgh|ijkl|mnop/)
+})
+
+test('startup check passes when Gmail accepts the login', async () => {
+  assert.deepEqual(await verifyMailSettings(env, { verify: async () => true }), { ok: true })
 })
