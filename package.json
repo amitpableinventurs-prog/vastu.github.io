@@ -8,6 +8,7 @@
     "start": "vite preview",
     "build": "vite build",
     "lint": "oxlint",
+    "oauth:refresh-token": "node --env-file=.env.local scripts/get-google-refresh-token.js",
     "preview": "vite preview"
   },
   "dependencies": {
