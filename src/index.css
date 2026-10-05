@@ -31,6 +31,7 @@
 
 body { margin: 0; min-width: 320px; }
 button, input { font: inherit; }
+button, input[type='button'], input[type='submit'], input[type='reset'], .button { border-radius: 6px; }
 button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; }
 ::selection { background: var(--gold-light); color: var(--ink); }
 

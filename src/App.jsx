@@ -81,6 +81,14 @@ const gallery = {
   ],
 }
 
+const walkthroughSlides = [
+  { title: 'A grand arrival', image: photos.exterior, detail: 'Vastu City Rameshwaram' },
+  { title: 'Room to breathe', image: photos.garden, detail: 'Landscaped spaces' },
+  { title: 'Everyday leisure', image: photos.pool, detail: 'Ready-to-use amenities' },
+  { title: 'Wellness, close to home', image: photos.gym, detail: 'Modern fitness centre' },
+  { title: 'A peaceful retreat', image: photos.temple, detail: 'Temple within the community' },
+]
+
 function Icon({ name, size = 20 }) {
   const paths = {
     arrow: <><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></>,
@@ -207,6 +215,7 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [locationTab, setLocationTab] = useState('Schools')
   const [galleryTab, setGalleryTab] = useState('Exterior')
+  const [activeWalkthroughSlide, setActiveWalkthroughSlide] = useState(0)
   const [modal, setModal] = useState(null)
   const [activeHeaderImage, setActiveHeaderImage] = useState(0)
   const [headerScrolled, setHeaderScrolled] = useState(false)
@@ -242,10 +251,17 @@ function App() {
     setModal({ kind: 'form', title })
   }
 
+  function moveWalkthroughSlide(direction) {
+    setActiveWalkthroughSlide((current) => (
+      (current + direction + walkthroughSlides.length) % walkthroughSlides.length
+    ))
+  }
+
   const navItems = [
-    ['Overview', '#about'],
-    ['Configuration', '#configuration'],
-    ['Amenities', '#amenities'],
+    ['About', '#about'],
+    ['Highlights', '#highlights'],
+    ['Pricing', '#configuration'],
+    ['Location', '#location'],
     ['Gallery', '#gallery'],
   ]
 
@@ -254,13 +270,23 @@ function App() {
       <header className={`site-header${headerScrolled ? ' is-scrolled' : ''}`} id="top">
         <a className="brand" href="#top" aria-label="Vastu City Rameshwaram home">
           <span className="brand-name">VASTU CITY</span>
-          <span className="brand-sub">Rameshwaram</span>
+          <span className="brand-sub">RAMESHWARAM</span>
+          <span className="brand-tagline">MARKETED BY HAPPY MOVE</span>
         </a>
-        <span className="header-partner">Marketed by <span className="happy-move">Happy Move</span><br />Authorized Channel Partner</span>
         <nav className="desktop-nav" aria-label="Main navigation">
           {navItems.map(([label, href]) => <a key={href} href={href}>{label}</a>)}
         </nav>
-        <button className="header-callback" type="button" onClick={() => openRequest('Express Your Interest')}>☎ CALL BACK</button>
+        <div className="header-actions">
+          <a className="header-contact-link" href="tel:+919403892218">Call</a>
+          <a className="header-contact-link" href="https://wa.me/919403892218" target="_blank" rel="noreferrer">WhatsApp</a>
+          <button className="header-callback" type="button" onClick={() => openRequest('Book a site visit')}>SITE VISIT</button>
+          <span className="header-theme" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+              <circle cx="12" cy="12" r="3.5" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" />
+            </svg>
+          </span>
+        </div>
         <button className="menu-toggle" type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
           <Icon name={menuOpen ? 'close' : 'menu'} size={25} />
         </button>
@@ -302,8 +328,28 @@ function App() {
               <p className="eyebrow">LIMITED INVENTORY</p>
               <h2>Express Your Interest</h2>
               <p className="interest-copy">Get pricing, offers &amp; site visit slots.</p>
-              <LeadForm buttonLabel="SUBMIT" onFocusChange={setLeadFormFocused} />
+              <button className="interest-cta" type="button" onClick={() => openRequest('Request a callback')}>
+                REQUEST A CALLBACK <Icon name="arrow" size={17} />
+              </button>
+              <p className="interest-consent">By submitting, you agree to be contacted by Happy Move about Vastu City Rameshwaram.</p>
             </aside>
+          </div>
+        </section>
+
+        <section className="contact-strip" aria-label="Contact options">
+          <div className="contact-strip-grid page-wrap">
+            <a className="contact-card" href="tel:+919403892218">
+              <span>CALL US</span>
+              <strong>+91 94038 92218</strong>
+            </a>
+            <a className="contact-card" href="mailto:reethappymove19@gmail.com">
+              <span>EMAIL</span>
+              <strong>reethappymove19@gmail.com</strong>
+            </a>
+            <button className="contact-card" type="button" onClick={() => openRequest('Book a site visit')}>
+              <span>SITE VISIT</span>
+              <strong>Book a personalized walkthrough</strong>
+            </button>
           </div>
         </section>
 
@@ -316,7 +362,7 @@ function App() {
               <a className="link-button button button-gold" href="/vastu-city-rameshwaram-brochure.pdf" download="vastu-city-rameshwaram-brochure.pdf">DOWNLOAD BROCHURE <Icon name="download" size={16} /></a>
             </div>
             <figure className="about-image-wrap">
-              <img src={photos.garden} alt="Vastu City towers and garden" loading="lazy" />
+              <img src={photos.hero} alt="Vastu City towers and landscaped courtyard" loading="lazy" />
               <figcaption><span>13</span><span>RESIDENTIAL TOWERS</span></figcaption>
             </figure>
           </div>
@@ -351,20 +397,22 @@ function App() {
                   <div className="pricing-row" role="row">
                     <div className="residence-name" role="cell"><strong>Premium Residence (Typical Plan)</strong></div>
                     <span className="area-value" role="cell">1660 Carpet</span>
-                    <div className="price-action" role="cell"><button className="button button-gold" type="button" onClick={() => openRequest('Ask about the premium residence')}>PRICE ON REQUEST</button></div>
+                    <div className="price-action" role="cell"><button className="button button-gold" type="button" onClick={() => openRequest('Ask about the premium residence')}><span>PRICE ON<br />REQUEST</span></button></div>
                   </div>
                   <div className="pricing-row" role="row">
                     <div className="residence-name" role="cell"><strong>Other Configurations</strong></div>
                     <span className="area-value" role="cell">On Request</span>
-                    <div className="price-action" role="cell"><button className="button button-gold" type="button" onClick={() => openRequest('Explore other configurations')}>PRICE ON REQUEST</button></div>
+                    <div className="price-action" role="cell"><button className="button button-gold" type="button" onClick={() => openRequest('Explore other configurations')}><span>PRICE ON<br />REQUEST</span></button></div>
                   </div>
                   <div className="pricing-footnote"><p>Typical plan includes lobby, living room, kitchen with store, bedrooms with dressing &amp; toilets, wash area and a 12'10" × 6'5" balcony.</p></div>
                 </div>
               </div>
-              <button className="floorplan-card" type="button" onClick={() => setModal({ kind: 'floorplan', title: 'Typical residence floor plan' })} aria-label="View floor plan">
-                <img src={photos.floorplan} alt="Floor plan preview" loading="lazy" />
-                <span className="floorplan-label"><span className="floorplan-lock">⌑</span><strong>VIEW FLOOR PLAN</strong></span>
-              </button>
+              <div className="configuration-visual">
+                <img className="configuration-photo" src={photos.pool} alt="Swimming pool at Vastu City Rameshwaram" loading="lazy" />
+                <button className="floorplan-link" type="button" onClick={() => setModal({ kind: 'floorplan', title: 'Typical residence floor plan' })}>
+                  VIEW FLOOR PLAN
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -412,13 +460,57 @@ function App() {
                 {Object.keys(gallery).map((tab) => <button key={tab} type="button" role="tab" aria-selected={galleryTab === tab} className={galleryTab === tab ? 'active' : ''} onClick={() => setGalleryTab(tab)}>{tab === 'Interior / amenities' ? 'INTERIOR / AMENITIES' : tab.toUpperCase()}</button>)}
               </div>
             </div>
-            <div className="gallery-grid">
+            <div className={`gallery-grid${galleryTab === 'Floor plans' ? ' gallery-grid-floorplan' : ''}`}>
               {gallery[galleryTab].map((item, index) => (
-                <button className={`gallery-item gallery-item-${index + 1}${index > 2 ? ' gallery-locked' : ''}`} key={item.title} type="button" onClick={() => index > 2 ? openRequest('Request the full gallery') : setModal({ kind: 'image', title: item.title, image: item.image })} aria-label={index > 2 ? `${item.title} click to view` : `View ${item.title}`}>
+                <button className={`gallery-item gallery-item-${index + 1}`} key={item.title} type="button" onClick={() => setModal({ kind: 'image', title: item.title, image: item.image })} aria-label={`View ${item.title}`}>
                   <img src={item.image} alt={item.title} loading="lazy" />
                   <span className="gallery-item-caption"><span>0{index + 1} / 0{gallery[galleryTab].length}</span><strong>{item.title}</strong><Icon name="arrowUp" size={17} /></span>
-                  {index > 2 && <span className="gallery-lock">⌑<small>CLICK TO VIEW</small></span>}
                 </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="walkthrough-section section-pad" aria-label="Vastu City image slider">
+          <div className="walkthrough-wrap page-wrap">
+            <div className="walkthrough-heading">
+              <SectionHeading eyebrow="LIFE AT VASTU CITY" title="A closer look at your next home" light />
+              <div className="walkthrough-controls">
+                <button type="button" aria-label="Previous slide" onClick={() => moveWalkthroughSlide(-1)}><Icon name="arrow" size={19} /></button>
+                <button type="button" aria-label="Next slide" onClick={() => moveWalkthroughSlide(1)}><Icon name="arrow" size={19} /></button>
+              </div>
+            </div>
+            <div className="walkthrough-grid" aria-live="polite">
+              {[0, 1, 2].map((offset) => {
+                const slideIndex = (activeWalkthroughSlide + offset) % walkthroughSlides.length
+                const slide = walkthroughSlides[slideIndex]
+                return (
+                  <button
+                    className="walkthrough-card"
+                    key={slide.title}
+                    type="button"
+                    onClick={() => setModal({ kind: 'image', title: slide.title, image: slide.image })}
+                    aria-label={`View ${slide.title}`}
+                  >
+                    <img src={slide.image} alt="" loading="lazy" />
+                    <span className="walkthrough-caption">
+                      <span className="walkthrough-detail">{slide.detail}</span>
+                      <strong>{slide.title}</strong>
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+            <div className="walkthrough-pagination" aria-label="Choose a slide">
+              {walkthroughSlides.map((slide, index) => (
+                <button
+                  key={slide.title}
+                  type="button"
+                  aria-label={`Show slide ${index + 1}: ${slide.title}`}
+                  aria-current={activeWalkthroughSlide === index ? 'true' : undefined}
+                  className={activeWalkthroughSlide === index ? 'active' : ''}
+                  onClick={() => setActiveWalkthroughSlide(index)}
+                />
               ))}
             </div>
           </div>
@@ -444,16 +536,24 @@ function App() {
 
       <footer className="site-footer">
         <div className="footer-main page-wrap">
-          <a className="brand footer-brand" href="#top"><span className="brand-name">Vastu City</span><span className="brand-sub">Rameshwaram</span></a>
-          <p className="footer-marketer">Marketed by <span className="happy-move">Happy Move</span><br />Authorized Channel Partner</p>
-          <div className="footer-contact">
-            <span><Icon name="badge" size={15} /> MP RERA NO: P-OTH-23-3881</span>
-            <a href="https://maps.google.com/?q=Vidyasagar+School+Indore%2C+Pragati+Vihar%2C+Indore%2C+Madhya+Pradesh+452016%2C+India"><Icon name="pin" size={15} /> Vidyasagar School Indore, Pragati Vihar, Indore, Madhya Pradesh 452016, India</a>
-            <a href="mailto:reethappymove19@gmail.com"><Icon name="mail" size={15} /> reethappymove19@gmail.com</a>
+          <div className="footer-about">
+            <a className="brand footer-brand" href="#top" aria-label="Vastu City Rameshwaram home"><span className="brand-name">VASTU CITY</span><span className="brand-sub">RAMESHWARAM</span></a>
+            <p className="footer-marketer">Marketed by Happy Move – Authorized Channel Partner</p>
           </div>
-          <div className="footer-rera"><span>MP RERA NO.</span><strong>P-OTH-23-3881</strong><span>APPROVED PROJECT</span></div>
+          <nav className="footer-nav" aria-label="Footer navigation">
+            {[
+              ['About', '#about'],
+              ['Highlights', '#highlights'],
+              ['Pricing', '#configuration'],
+              ['Location', '#location'],
+            ].map(([label, href]) => <a key={href} href={href}>{label}</a>)}
+          </nav>
+          <div className="footer-contact">
+            <a href="tel:+919403892218">+91 94038 92218</a>
+            <a href="mailto:reethappymove19@gmail.com">reethappymove19@gmail.com</a>
+            <span>Indore, Madhya Pradesh</span>
+          </div>
         </div>
-        <div className="footer-legal page-wrap"><p><strong>Disclaimer:</strong> This is the official landing page of Happy Move, an authorized channel partner for Vastu City Rameshwaram. This is not the developer's official website.<br />The contents are purely conceptual and have no legal binding. The builder reserves the right to amend layouts, plans, dimensions, elevations, colour schemes, specifications and amenities without notice. Subject to Indore jurisdiction. Images are for representation; some are artistic renders.<br />© 2026 Happy Move. All rights reserved.</p><div><a href="#top">Privacy Policy</a><a href="#top">Disclaimer</a></div></div>
       </footer>
 
       <div className="sticky-actions" aria-label="Quick actions" style={leadFormFocused ? { transform: 'translateY(100%)', opacity: 0, visibility: 'hidden', pointerEvents: 'none' } : undefined}>
