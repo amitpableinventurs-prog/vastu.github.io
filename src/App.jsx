@@ -170,7 +170,7 @@ function LeadForm({ compact = false, buttonLabel = 'SEND REQUEST', source = 'Her
       <label className="sr-only" htmlFor={`${formId}-name`}>Full name</label>
       <input id={`${formId}-name`} name="name" autoComplete="name" placeholder="Full Name" required />
       <label className="sr-only" htmlFor={`${formId}-phone`}>Phone number</label>
-      <input id={`${formId}-phone`} name="phone" type="tel" autoComplete="tel" placeholder="Phone Number" pattern="[0-9+() -]{10,}" title="Enter a valid phone number" required />
+      <input id={`${formId}-phone`} name="phone" type="tel" autoComplete="tel" placeholder="Phone Number" pattern="(?=(?:\D*\d){10})\+?[0-9\(\) \-]{10,20}" title="Enter a valid phone number (at least 10 digits)" required />
       <label className="sr-only" htmlFor={`${formId}-email`}>Email address</label>
       <input id={`${formId}-email`} name="email" type="email" autoComplete="email" placeholder="Email Address" required />
       {compact && <>
