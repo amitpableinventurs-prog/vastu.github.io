@@ -19,7 +19,7 @@ import headerImageTen from './assets/property/vc-10.jpg'
 import headerImageEleven from './assets/property/vc-11.jpg'
 
 const headerImages = [headerImageNine, headerImageTen, headerImageEleven]
-const leadFormEndpoint = 'https://formsubmit.co/ajax/reethappymove19@gmail.com'
+const leadFormEndpoint = import.meta.env.VITE_LEAD_API_URL || '/api/leads'
 
 const photos = {
   hero: heroImage,
@@ -123,8 +123,6 @@ function LeadForm({ compact = false, buttonLabel = 'SEND REQUEST', source = 'Her
 
     const formData = new FormData(event.currentTarget)
     const submission = Object.fromEntries(formData.entries())
-    submission._subject = `Vastu City enquiry: ${submission.name}`
-    submission._template = 'table'
 
     try {
       const response = await fetch(leadFormEndpoint, {
