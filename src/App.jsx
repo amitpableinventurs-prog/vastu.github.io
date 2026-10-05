@@ -1,43 +1,27 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import './App.css'
 
-import heroImage from './assets/property/hero.jpg'
-import gardenImage from './assets/property/garden.jpg'
-import poolImage from './assets/property/pool.jpg'
-import gymImage from './assets/property/gym.jpg'
-import templeImage from './assets/property/temple.jpg'
-import landscapeImage from './assets/property/landscape.jpg'
-import playImage from './assets/property/play.jpg'
-import clubImage from './assets/property/club.jpg'
-import exteriorTwoImage from './assets/property/exterior-two.jpg'
-import exteriorFourImage from './assets/property/exterior-four.jpg'
-import exteriorFiveImage from './assets/property/exterior-five.jpg'
-import exteriorSixImage from './assets/property/exterior-six.jpg'
-import floorplanImage from './assets/property/floorplan.jpg'
-import headerImageNine from './assets/property/vc-9.jpg'
-import headerImageTen from './assets/property/vc-10.jpg'
-import headerImageEleven from './assets/property/vc-11.jpg'
+import heroRender from './assets/optimized/hero-render.webp'
+import heroGarden from './assets/optimized/hero-garden.webp'
+import heroDusk from './assets/optimized/hero-dusk.webp'
+import aboutRender from './assets/optimized/about-render.webp'
+import aerialImage from './assets/optimized/aerial.webp'
+import familyImage from './assets/optimized/family.webp'
+import goldenHourImage from './assets/optimized/golden-hour.webp'
+import towersImage from './assets/optimized/towers-actual.webp'
+import poolImage from './assets/optimized/pool-actual.webp'
+import gymImage from './assets/optimized/gym-actual.webp'
+import gardenImage from './assets/optimized/garden-actual.webp'
+import templeImage from './assets/optimized/temple.webp'
+import playImage from './assets/optimized/play.webp'
+import bedroomImage from './assets/optimized/bedroom.webp'
+import livingImage from './assets/optimized/living.webp'
+import sitePlanImage from './assets/optimized/plan-site.webp'
+import threeBhkPlanImage from './assets/optimized/plan-3bhk.webp'
+import fourBhkPlanImage from './assets/optimized/plan-4bhk.webp'
 
-const headerImages = [headerImageNine, headerImageTen, headerImageEleven]
+const headerImages = [heroRender, heroGarden, heroDusk]
 const leadFormEndpoint = import.meta.env.VITE_LEAD_API_URL || '/api/leads'
-
-const photos = {
-  hero: heroImage,
-  garden: gardenImage,
-  pool: poolImage,
-  gym: gymImage,
-  temple: templeImage,
-  landscape: landscapeImage,
-  play: playImage,
-  club: clubImage,
-  exterior: heroImage,
-  exteriorTwo: exteriorTwoImage,
-  exteriorThree: gardenImage,
-  exteriorFour: exteriorFourImage,
-  exteriorFive: exteriorFiveImage,
-  exteriorSix: exteriorSixImage,
-  floorplan: floorplanImage,
-}
 
 const highlights = [
   ['RERA Approved', 'P-OTH-23-3881'],
@@ -59,34 +43,47 @@ const locationDetails = {
   Neighbourhood: ['Bicholi Mardana', 'Peaceful residential setting', 'Five gated entries'],
 }
 
+const amenities = [
+  { title: 'Swimming Pool', image: poolImage },
+  { title: 'Gymnasium', image: gymImage },
+  { title: 'Landscaped Gardens', image: gardenImage },
+  { title: 'Temple', image: templeImage },
+  { title: "Kids' Play Area", image: playImage, note: 'Project visual' },
+  { title: 'Residential Towers', image: towersImage },
+]
+
 const gallery = {
   Exterior: [
-    { title: 'Exterior 1', image: photos.exterior },
-    { title: 'Exterior 2', image: photos.exteriorTwo },
-    { title: 'Exterior 3', image: photos.exteriorThree },
-    { title: 'Exterior 4', image: photos.exteriorFour },
-    { title: 'Exterior 5', image: photos.exteriorFive },
-    { title: 'Exterior 6', image: photos.exteriorSix },
+    { title: 'Aerial view of the community', image: aerialImage },
+    { title: 'Life at Vastu City', image: familyImage },
+    { title: 'Golden hour', image: goldenHourImage },
+    { title: 'Residential towers', image: towersImage },
+    { title: 'Swimming pool', image: poolImage },
+    { title: 'Landscaped gardens', image: gardenImage },
+    { title: 'Official project render', image: heroRender },
   ],
   'Interior / amenities': [
-    { title: 'Swimming Pool', image: photos.pool },
-    { title: 'Gymnasium', image: photos.gym },
-    { title: 'Temple', image: photos.temple },
-    { title: 'Landscaped Gardens', image: photos.landscape },
-    { title: "Kids' Play Area", image: photos.play },
-    { title: 'Club House', image: photos.club },
+    { title: 'Gymnasium', image: gymImage },
+    { title: 'Swimming pool', image: poolImage },
+    { title: 'Temple', image: templeImage },
+    { title: 'Bedroom (illustrative)', image: bedroomImage },
+    { title: 'Living area (illustrative)', image: livingImage },
+    { title: "Kids' play area", image: playImage },
+    { title: 'Landscaped gardens', image: gardenImage },
   ],
   'Floor plans': [
-    { title: 'Floor plan preview', image: photos.floorplan },
+    { title: 'Master site plan', image: sitePlanImage, plan: true },
+    { title: 'Typical 3 BHK · 2300 sq.ft.', image: threeBhkPlanImage, plan: true },
+    { title: 'Typical 4 BHK · 3906 sq.ft.', image: fourBhkPlanImage, plan: true },
   ],
 }
 
 const walkthroughSlides = [
-  { title: 'A grand arrival', image: photos.exterior, detail: 'Vastu City Rameshwaram' },
-  { title: 'Room to breathe', image: photos.garden, detail: 'Landscaped spaces' },
-  { title: 'Everyday leisure', image: photos.pool, detail: 'Ready-to-use amenities' },
-  { title: 'Wellness, close to home', image: photos.gym, detail: 'Modern fitness centre' },
-  { title: 'A peaceful retreat', image: photos.temple, detail: 'Temple within the community' },
+  { title: 'A grand arrival', image: heroRender, detail: 'Vastu City Rameshwaram' },
+  { title: 'Room to breathe', image: gardenImage, detail: 'Landscaped spaces' },
+  { title: 'Everyday leisure', image: poolImage, detail: 'Ready-to-use amenities' },
+  { title: 'Wellness, close to home', image: gymImage, detail: 'Modern fitness centre' },
+  { title: 'A peaceful retreat', image: templeImage, detail: 'Temple within the community' },
 ]
 
 function Icon({ name, size = 20 }) {
@@ -200,6 +197,59 @@ function LeadForm({ compact = false, buttonLabel = 'SEND REQUEST', source = 'Her
   )
 }
 
+function AmenityCarousel({ onOpen }) {
+  const trackRef = useRef(null)
+  const [state, setState] = useState({ page: 0, pages: 1 })
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return undefined
+    const update = () => {
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0
+      const max = track.scrollWidth - track.clientWidth
+      const pages = Math.max(1, Math.round((track.scrollWidth + gap) / (track.clientWidth + gap)))
+      const page = max > 0 ? Math.round((track.scrollLeft / max) * (pages - 1)) : 0
+      setState((current) => (current.page === page && current.pages === pages ? current : { page, pages }))
+    }
+    update()
+    track.addEventListener('scroll', update, { passive: true })
+    const observer = new ResizeObserver(update)
+    observer.observe(track)
+    return () => {
+      track.removeEventListener('scroll', update)
+      observer.disconnect()
+    }
+  }, [])
+
+  function scrollToPage(page) {
+    const track = trackRef.current
+    const max = track.scrollWidth - track.clientWidth
+    track.scrollTo({ left: state.pages > 1 ? (max * page) / (state.pages - 1) : 0, behavior: 'smooth' })
+  }
+
+  return (
+    <div className="amenity-carousel">
+      <div className="amenity-track" ref={trackRef} tabIndex={0} aria-label="Amenity photographs">
+        {amenities.map((item) => (
+          <button className="amenity-card" key={item.title} type="button" onClick={() => onOpen(item)} aria-label={`View ${item.title}`}>
+            <img src={item.image} alt={item.title} loading="lazy" />
+            <span className="amenity-pill">{item.title}{item.note && <small>{item.note}</small>}</span>
+          </button>
+        ))}
+      </div>
+      <div className="carousel-controls">
+        <button type="button" aria-label="Previous amenities" disabled={state.page === 0} onClick={() => scrollToPage(state.page - 1)}><Icon name="arrow" size={17} /></button>
+        <div className="carousel-dots">
+          {Array.from({ length: state.pages }, (_, index) => (
+            <button key={index} type="button" aria-label={`Amenities page ${index + 1}`} aria-current={state.page === index ? 'true' : undefined} className={state.page === index ? 'active' : ''} onClick={() => scrollToPage(index)} />
+          ))}
+        </div>
+        <button type="button" aria-label="Next amenities" disabled={state.page === state.pages - 1} onClick={() => scrollToPage(state.page + 1)}><Icon name="arrow" size={17} /></button>
+      </div>
+    </div>
+  )
+}
+
 function SectionHeading({ eyebrow, title, light = false, intro }) {
   return (
     <div className={`section-heading${light ? ' section-heading-light' : ''}`}>
@@ -220,20 +270,43 @@ function App() {
   const [activeHeaderImage, setActiveHeaderImage] = useState(0)
   const [headerScrolled, setHeaderScrolled] = useState(false)
   const [leadFormFocused, setLeadFormFocused] = useState(false)
+  const [activeSection, setActiveSection] = useState('')
+  const walkthroughTouchX = useRef(null)
+  const progressRef = useRef(null)
 
   useEffect(() => {
-    const rotation = window.setInterval(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+    const rotation = window.setTimeout(() => {
       setActiveHeaderImage((current) => (current + 1) % headerImages.length)
-    }, 2000)
+    }, 5000)
 
-    return () => window.clearInterval(rotation)
-  }, [])
+    return () => window.clearTimeout(rotation)
+  }, [activeHeaderImage])
 
   useEffect(() => {
-    const updateHeaderState = () => setHeaderScrolled(window.scrollY > 20)
+    const sectionIds = ['about', 'highlights', 'configuration', 'location', 'gallery']
+    let frame = 0
+    const updateHeaderState = () => {
+      frame = 0
+      setHeaderScrolled(window.scrollY > 20)
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0})`
+      let current = ''
+      for (const id of sectionIds) {
+        const element = document.getElementById(id)
+        if (element && element.getBoundingClientRect().top <= 140) current = `#${id}`
+      }
+      setActiveSection(current)
+    }
+    const onScroll = () => { if (!frame) frame = window.requestAnimationFrame(updateHeaderState) }
     updateHeaderState()
-    window.addEventListener('scroll', updateHeaderState, { passive: true })
-    return () => window.removeEventListener('scroll', updateHeaderState)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
   }, [])
 
   useEffect(() => {
@@ -247,6 +320,19 @@ function App() {
     }
   }, [modal])
 
+  useEffect(() => {
+    if (!menuOpen) return undefined
+    const closeMenu = (event) => {
+      if (event.type === 'keydown' ? event.key === 'Escape' : !event.target.closest('.site-header')) setMenuOpen(false)
+    }
+    document.addEventListener('keydown', closeMenu)
+    document.addEventListener('pointerdown', closeMenu)
+    return () => {
+      document.removeEventListener('keydown', closeMenu)
+      document.removeEventListener('pointerdown', closeMenu)
+    }
+  }, [menuOpen])
+
   function openRequest(title) {
     setModal({ kind: 'form', title })
   }
@@ -255,6 +341,14 @@ function App() {
     setActiveWalkthroughSlide((current) => (
       (current + direction + walkthroughSlides.length) % walkthroughSlides.length
     ))
+  }
+
+  function handleWalkthroughSwipe(event) {
+    const startX = walkthroughTouchX.current
+    walkthroughTouchX.current = null
+    if (startX === null) return
+    const distance = event.changedTouches[0].clientX - startX
+    if (Math.abs(distance) > 40) moveWalkthroughSlide(distance < 0 ? 1 : -1)
   }
 
   const navItems = [
@@ -268,13 +362,14 @@ function App() {
   return (
     <>
       <header className={`site-header${headerScrolled ? ' is-scrolled' : ''}`} id="top">
+        <span className="scroll-progress" ref={progressRef} aria-hidden="true" />
         <a className="brand" href="#top" aria-label="Vastu City Rameshwaram home">
           <span className="brand-name">VASTU CITY</span>
           <span className="brand-sub">RAMESHWARAM</span>
           <span className="brand-tagline">MARKETED BY HAPPY MOVE</span>
         </a>
         <nav className="desktop-nav" aria-label="Main navigation">
-          {navItems.map(([label, href]) => <a key={href} href={href}>{label}</a>)}
+          {navItems.map(([label, href]) => <a key={href} href={href} aria-current={activeSection === href ? 'location' : undefined}>{label}</a>)}
         </nav>
         <div className="header-actions">
           <a className="header-contact-link" href="tel:+919403892218">Call</a>
@@ -293,8 +388,12 @@ function App() {
         {menuOpen && (
           <nav className="menu-panel" aria-label="Main navigation">
             {navItems.map(([label, href], index) => (
-              <a key={href} href={href} onClick={() => setMenuOpen(false)}><span>0{index + 1}</span>{label}<Icon name="arrowUp" size={15} /></a>
+              <a key={href} href={href} aria-current={activeSection === href ? 'location' : undefined} onClick={() => setMenuOpen(false)}><span>0{index + 1}</span>{label}<Icon name="arrowUp" size={15} /></a>
             ))}
+            <div className="menu-panel-actions">
+              <a href="tel:+919403892218">Call</a>
+              <a href="https://wa.me/919403892218" target="_blank" rel="noreferrer">WhatsApp</a>
+            </div>
           </nav>
         )}
       </header>
@@ -313,6 +412,15 @@ function App() {
             />
           ))}
           <div className="hero-shade" />
+          <div className="hero-slider-controls">
+            <button type="button" aria-label="Previous image" onClick={() => setActiveHeaderImage((current) => (current - 1 + headerImages.length) % headerImages.length)}><Icon name="arrow" size={17} /></button>
+            <div className="carousel-dots">
+              {headerImages.map((image, index) => (
+                <button key={image} type="button" aria-label={`Show hero image ${index + 1}`} aria-current={index === activeHeaderImage ? 'true' : undefined} className={index === activeHeaderImage ? 'active' : ''} onClick={() => setActiveHeaderImage(index)} />
+              ))}
+            </div>
+            <button type="button" aria-label="Next image" onClick={() => setActiveHeaderImage((current) => (current + 1) % headerImages.length)}><Icon name="arrow" size={17} /></button>
+          </div>
           <div className="hero-content page-wrap">
             <div className="hero-copy">
               <p className="approval"><span className="approval-dot" /> RERA APPROVED <span className="approval-separator">/</span> P-OTH-23-3881</p>
@@ -357,12 +465,12 @@ function App() {
           <div className="about-grid page-wrap">
             <div className="about-copy">
               <SectionHeading eyebrow="ABOUT THE PROJECT" title={<>Here your address <em>speaks</em> about your status</>} />
-              <p>Vastu City Rameshwaram (Phase-2) is a gated residential community behind Vidhya Sagar School in Bicholi Mardana. Spread across 13 towers with five entry gates and wide 9 m–12 m approach roads, it is designed as a true kingdom — vastu-led planning, landscaped gardens and a lifestyle defined by space.</p>
-              <p>Unlike promises on paper, the swimming pool, gymnasium, temple and gardens here are already built and ready to use — every photograph you see is an actual photograph. Approved by SBI, HDFC Home Loans, LIC HFL and all major banks.</p>
+              <p>Vastu City Rameshwaram (Phase-2) is a gated residential community behind Vidhya Sagar School in Bicholi Mardana, Indore. Spread across 13 towers with five entry gates and wide 9 m–12 m approach roads, it is designed as a true kingdom — vastu-led planning, landscaped gardens and a lifestyle defined by space.</p>
+              <p>Unlike promises on paper, the swimming pool, gymnasium, temple and gardens here are already built and ready to use. Images on this page include actual site photographs and project visuals. Approved by SBI, HDFC Home Loans, LIC HFL and all major banks.</p>
               <a className="link-button button button-gold" href="/vastu-city-rameshwaram-brochure.pdf" download="vastu-city-rameshwaram-brochure.pdf">DOWNLOAD BROCHURE <Icon name="download" size={16} /></a>
             </div>
             <figure className="about-image-wrap">
-              <img src={photos.hero} alt="Vastu City towers and landscaped courtyard" loading="lazy" />
+              <img src={aboutRender} alt="Vastu City towers and landscaped courtyard" loading="lazy" />
               <figcaption><span>13</span><span>RESIDENTIAL TOWERS</span></figcaption>
             </figure>
           </div>
@@ -408,7 +516,7 @@ function App() {
                 </div>
               </div>
               <div className="configuration-visual">
-                <img className="configuration-photo" src={photos.pool} alt="Swimming pool at Vastu City Rameshwaram" loading="lazy" />
+                <img className="configuration-photo" src={bedroomImage} alt="Illustrative bedroom interior" loading="lazy" />
                 <button className="floorplan-link" type="button" onClick={() => setModal({ kind: 'floorplan', title: 'Typical residence floor plan' })}>
                   VIEW FLOOR PLAN
                 </button>
@@ -437,17 +545,7 @@ function App() {
         <section className="amenities-section section-pad" id="amenities">
           <div className="page-wrap">
             <div className="amenities-heading"><SectionHeading eyebrow="READY-TO-USE AMENITIES" title="Actual photographs, not promises" light /></div>
-            <div className="amenity-grid">
-              {[
-                ['Swimming Pool', photos.pool, '01'], ['Gymnasium', photos.gym, '02'], ['Temple', photos.temple, '03'],
-                ['Landscaped Gardens', photos.landscape, '04'], ["Kids' Play Area", photos.play, '05'], ['Club House', photos.club, '06'],
-              ].map(([label, image, index]) => (
-                <article className="amenity-card" key={label}>
-                  <img src={image} alt={label} loading="lazy" />
-                  <div className="amenity-overlay"><span>{index}</span><h3>{label}</h3><span className="amenity-plus"><Icon name="arrowUp" size={15} /></span></div>
-                </article>
-              ))}
-            </div>
+            <AmenityCarousel onOpen={(item) => setModal({ kind: 'image', title: item.title, image: item.image })} />
             <p className="amenity-extras">Also: Shopping Plaza · Wide internal roads · 5 gated entries · Gym with treadmill, elliptical, cable machine &amp; exercise bike</p>
           </div>
         </section>
@@ -462,7 +560,7 @@ function App() {
             </div>
             <div className={`gallery-grid${galleryTab === 'Floor plans' ? ' gallery-grid-floorplan' : ''}`}>
               {gallery[galleryTab].map((item, index) => (
-                <button className={`gallery-item gallery-item-${index + 1}`} key={item.title} type="button" onClick={() => setModal({ kind: 'image', title: item.title, image: item.image })} aria-label={`View ${item.title}`}>
+                <button className={`gallery-item gallery-item-${index + 1}`} key={item.title} type="button" onClick={() => setModal({ kind: 'image', title: item.title, image: item.image, plan: item.plan })} aria-label={`View ${item.title}`}>
                   <img src={item.image} alt={item.title} loading="lazy" />
                   <span className="gallery-item-caption"><span>0{index + 1} / 0{gallery[galleryTab].length}</span><strong>{item.title}</strong><Icon name="arrowUp" size={17} /></span>
                 </button>
@@ -480,7 +578,12 @@ function App() {
                 <button type="button" aria-label="Next slide" onClick={() => moveWalkthroughSlide(1)}><Icon name="arrow" size={19} /></button>
               </div>
             </div>
-            <div className="walkthrough-grid" aria-live="polite">
+            <div
+              className="walkthrough-grid"
+              aria-live="polite"
+              onTouchStart={(event) => { walkthroughTouchX.current = event.touches[0].clientX }}
+              onTouchEnd={handleWalkthroughSwipe}
+            >
               {[0, 1, 2].map((offset) => {
                 const slideIndex = (activeWalkthroughSlide + offset) % walkthroughSlides.length
                 const slide = walkthroughSlides[slideIndex]
@@ -562,14 +665,14 @@ function App() {
       </div>
 
       {modal && (
-        <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && setModal(null)}>
+        <div className={`modal-backdrop modal-backdrop-${modal.kind}`} role="presentation" onMouseDown={(event) => event.target === event.currentTarget && setModal(null)}>
           <section className={`modal-dialog${modal.kind === 'image' ? ' modal-image' : ''}`} role="dialog" aria-modal="true" aria-labelledby="modal-title">
             <button className="modal-close" type="button" aria-label="Close dialog" onClick={() => setModal(null)}><Icon name="close" size={21} /></button>
-            {modal.kind === 'image' ? <img src={modal.image} alt={modal.title} /> : modal.kind === 'floorplan' ? (
+            {modal.kind === 'image' ? <div className={`modal-image-frame${modal.plan ? ' is-plan' : ''}`}><img src={modal.image} alt={modal.title} /></div> : modal.kind === 'floorplan' ? (
               <>
-                <p className="eyebrow">1660 SQ. FT. · TYPICAL PLAN</p><h2 id="modal-title">{modal.title}</h2>
+                <p className="eyebrow">TYPICAL 3 BHK FLOOR PLAN · 2300 SQ. FT.</p><h2 id="modal-title">{modal.title}</h2>
                 <p className="modal-description">Typical plan includes lobby, living room, kitchen with store, bedrooms with dressing and toilets, wash area and balcony.</p>
-                <img className="modal-floorplan-image" src={photos.floorplan} alt="Typical 1660 square foot residence floor plan" />
+                <div className="modal-floorplan-scroll"><img className="modal-floorplan-image" src={threeBhkPlanImage} alt="Typical 3 BHK residence floor plan" /></div>
                 <button className="button button-gold modal-cta" type="button" onClick={() => openRequest('Ask about the typical residence')}>ASK ABOUT THIS PLAN <Icon name="arrow" size={16} /></button>
               </>
             ) : (

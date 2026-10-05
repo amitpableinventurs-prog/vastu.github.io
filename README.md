@@ -1,15 +1,15 @@
-# React + Vite
+# Vastu City Rameshwaram
 
 ## GoDaddy Node.js app and Gmail leads
 
 The Node.js app serves both the built website and the `/api/leads` endpoint.
-The API sends enquiries through the Gmail API; OAuth secrets stay on the
-server. GitHub Pages cannot run this backend.
+Enquiries from the website forms are emailed to `LEADS_TO_EMAIL` over Gmail SMTP
+using an App Password. Credentials stay on the server. GitHub Pages cannot run
+this backend.
 
 ### Local development
 
-1. Copy `.env.example` to `.env.local` and set the Google OAuth values described
-   below.
+1. Copy `.env.example` to `.env.local` and set the Gmail values described below.
 2. Run `npm run server:dev` in one terminal.
 3. Run `npm run dev` in another terminal and open the Vite URL. Vite proxies
    `/api` requests to the local Node server.
@@ -27,47 +27,38 @@ server. GitHub Pages cannot run this backend.
 4. Restart the Node.js app. Its `/health` endpoint should return `{"status":"ok"}`;
    the website and form API are served from the same domain.
 
-Do not deploy `.env.local` or put OAuth values in frontend build variables.
+Do not deploy `.env.local` or put the App Password in frontend build variables.
 Keep the GitHub Pages workflow disabled for the production domain if GoDaddy is
-serving the live site.
+serving the live site. Some shared hosting plans block outbound SMTP on port 465;
+if enquiries fail only on the live server, ask GoDaddy to allow it.
 
-## Google/Gmail configuration
+## Gmail configuration
 
 Copy `.env.example` to `.env.local` for local development, or set these values
 in the GoDaddy Node.js app environment for production:
 
 ```env
-GOOGLE_CLIENT_ID=your_client_id
-GOOGLE_CLIENT_SECRET=your_client_secret
-GOOGLE_REFRESH_TOKEN=your_refresh_token
-GOOGLE_SENDER_EMAIL=your_google_account@gmail.com
+GMAIL_USER=your_gmail_address@gmail.com
+GMAIL_APP_PASSWORD=your_16_character_app_password
 LEADS_TO_EMAIL=reethappymove19@gmail.com
 FRONTEND_ORIGINS=https://vastucityrameshwaram.com
 ```
 
-`GOOGLE_SENDER_EMAIL` must be the Gmail account that granted the Gmail send
-scope and issued the refresh token. `LEADS_TO_EMAIL` is the inbox that receives
-enquiries. Keep all Google credentials server-side.
+`GMAIL_USER` is the Gmail account that sends the mail. `LEADS_TO_EMAIL` is the
+inbox that receives enquiries (it can be the same account). Each email's
+Reply-To is the visitor's address, so replying goes straight to the enquirer.
 
-### Generate a Gmail refresh token locally
+### Create a Gmail App Password
 
-For a Google OAuth client of type **Web application**:
+1. Turn on 2-Step Verification for the sending Google account
+   (<https://myaccount.google.com/security>).
+2. Open <https://myaccount.google.com/apppasswords>, create an app password
+   (any name, for example "Vastu City website") and copy the 16 characters.
+3. Put them in `GMAIL_APP_PASSWORD` (spaces are ignored) and restart the server.
 
-1. Enable the Gmail API in the Google Cloud project and configure the OAuth
-   consent screen to request the Gmail send scope.
-2. Add `http://localhost:3000/oauth2callback` as an authorized redirect URI
-   for the OAuth client.
-3. Copy `.env.example` to `.env.local` and put the client ID and secret in
-   `.env.local` (not in `.env.example`).
-4. Run `npm run oauth:refresh-token`, open the printed Google authorization
-   URL, sign in, and grant access. The helper prints the refresh token in the
-   terminal; add it to `.env.local` as `GOOGLE_REFRESH_TOKEN=...`.
-
-The helper listens only on localhost and requests the Gmail send scope. Do not
-put the refresh token or client secret in frontend code or commit `.env.local`.
-If the Google OAuth consent screen is in **Testing** mode, refresh tokens for
-Gmail scopes can expire after seven days; publish the consent screen or use an
-appropriate production OAuth setup before relying on ongoing delivery.
+An App Password does not expire, but anyone who has it can send mail as that
+account: keep it out of git and frontend code, and revoke it from the same
+Google page if it leaks.
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 

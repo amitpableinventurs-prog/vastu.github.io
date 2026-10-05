@@ -12,14 +12,13 @@
     "server:dev": "node --env-file=.env.local app.js",
     "build": "vite build",
     "lint": "oxlint",
-    "oauth:refresh-token": "node --env-file=.env.local scripts/get-google-refresh-token.js",
     "preview": "vite preview",
     "test": "node --test"
   },
   "dependencies": {
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.0",
-    "googleapis": "^183.0.0",
+    "nodemailer": "^10.0.15",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
