@@ -59,7 +59,7 @@ GoDaddy blocks outbound SMTP (`connect EACCES ...:465`), so Gmail passwords cann
 work there. Resend sends over HTTPS (port 443), which is not blocked.
 
 1. Sign up at <https://resend.com> **with the same address as `LEADS_TO_EMAIL`**
-   (for example `reethappymove19@gmail.com`). Without a verified domain, Resend only
+   (for example `happymoveritika898@gmail.com`). Without a verified domain, Resend only
    delivers to the account's own address.
 2. Open **API Keys**, create a key with "Sending access" and copy it (`re_...`).
 3. In the GoDaddy app settings add `RESEND_API_KEY` with that value, keep
@@ -82,7 +82,7 @@ in the GoDaddy Node.js app environment for production:
 ```env
 GMAIL_USER=your_gmail_address@gmail.com
 GMAIL_APP_PASSWORD=your_16_character_app_password
-LEADS_TO_EMAIL=reethappymove19@gmail.com
+LEADS_TO_EMAIL=happymoveritika898@gmail.com
 FRONTEND_ORIGINS=https://vastucityrameshwaram.com
 ```
 
