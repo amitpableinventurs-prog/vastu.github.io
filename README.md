@@ -36,7 +36,45 @@ accepted the login, or why not. GoDaddy has been seen blocking outbound port 465
 (`connect EACCES ...:465`); if so, set `SMTP_PORT=587` and redeploy. If 587 is also
 blocked, SMTP cannot work from that host and an HTTPS email API is needed.
 
-## Gmail configuration
+## Brochure download
+
+Every "Download brochure" button opens the enquiry form first. After the form is
+submitted the server returns a signed link that is valid for 15 minutes, and the
+browser downloads the PDF from `/api/brochure?t=...`. The PDF is kept at
+`server/private/vastu-city-rameshwaram-brochure.pdf`, outside `public/` and
+`dist/`, so there is no public URL for it. To publish a new brochure, replace that
+file (keep the name) and redeploy.
+
+If the lead email fails, a visitor can still download the brochure and the lead
+is written to the server log (`Brochure lead NOT emailed, recorded here instead`)
+so it is not lost. Plain enquiries still show an error when email fails.
+
+Links are signed with a random key created at startup, so links issued before a
+restart stop working. Set `BROCHURE_SECRET` to any long random string to keep
+them valid across restarts or when running more than one instance.
+
+## Email delivery with Resend (recommended on GoDaddy)
+
+GoDaddy blocks outbound SMTP (`connect EACCES ...:465`), so Gmail passwords cannot
+work there. Resend sends over HTTPS (port 443), which is not blocked.
+
+1. Sign up at <https://resend.com> **with the same address as `LEADS_TO_EMAIL`**
+   (for example `reethappymove19@gmail.com`). Without a verified domain, Resend only
+   delivers to the account's own address.
+2. Open **API Keys**, create a key with "Sending access" and copy it (`re_...`).
+3. In the GoDaddy app settings add `RESEND_API_KEY` with that value, keep
+   `LEADS_TO_EMAIL`, and redeploy. Locally, put the same line in `.env.local`.
+4. Check **Logs**: you should see `Mail check: using Resend over HTTPS.` and a
+   `Network check:` line listing which outbound ports are open.
+
+To send to any address or from your own domain, verify `vastucityrameshwaram.com`
+in Resend and set `MAIL_FROM`, for example `Vastu City <leads@vastucityrameshwaram.com>`.
+
+When `RESEND_API_KEY` is set it is used instead of Gmail. If an enquiry still cannot
+be emailed, the server log contains `Lead NOT emailed, recorded here instead:` followed
+by the lead's details, so nothing is lost.
+
+## Gmail configuration (fallback, needs outbound SMTP)
 
 Copy `.env.example` to `.env.local` for local development, or set these values
 in the GoDaddy Node.js app environment for production:

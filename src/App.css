@@ -2071,3 +2071,166 @@ button,
 }
 
 .carousel-controls { justify-content: center; }
+
+/* Hero: no dark overlay on the photographs. A soft text shadow keeps the copy readable. */
+.hero-shade { display: none; }
+.hero-copy h1,
+.hero-eyebrow,
+.hero-description { text-shadow: 0 2px 18px rgba(0, 0, 0, .55), 0 1px 3px rgba(0, 0, 0, .45); }
+
+/* Theme toggle (header, and a phone copy next to the menu button) */
+.header-theme { background: transparent; cursor: pointer; padding: 0; transition: background-color 160ms ease, border-color 160ms ease; }
+.header-theme:hover { background: rgba(215, 174, 88, .12); border-color: rgba(215, 174, 88, .5); }
+.header-theme-mobile { display: none; }
+@media (max-width: 900px) {
+  .header-theme-mobile { display: inline-flex; height: 42px; margin-left: auto; width: 42px; }
+  .menu-toggle { margin-left: 10px; }
+}
+
+/* Brochure form */
+.form-success > div { min-width: 0; }
+.form-download { gap: 14px; margin-top: 14px; min-height: 46px; }
+
+/* ---------- Light theme ---------- */
+html[data-theme='light'] { background: #f7f3ea; color-scheme: light; }
+
+/* Header and mobile menu */
+[data-theme='light'] .site-header,
+[data-theme='light'] .site-header.is-scrolled { background: #fbf8f2; border-bottom-color: rgba(40, 32, 16, .1); }
+[data-theme='light'] .brand-name,
+[data-theme='light'] .brand-sub { color: #1d1b16; }
+[data-theme='light'] .brand-tagline { color: #7a7568; }
+[data-theme='light'] .desktop-nav a { color: #4a463c; }
+[data-theme='light'] .desktop-nav a:hover,
+[data-theme='light'] .desktop-nav a:focus-visible,
+[data-theme='light'] .desktop-nav a[aria-current='location'],
+[data-theme='light'] .menu-panel a[aria-current='location'] { color: #8a6215; }
+[data-theme='light'] .header-contact-link { color: #3a372f; }
+[data-theme='light'] .header-contact-link:hover { color: #8a6215; }
+[data-theme='light'] .header-theme { border-color: rgba(40, 32, 16, .2); color: #8a6215; }
+[data-theme='light'] .menu-toggle { border-color: rgba(40, 32, 16, .2); color: #1d1b16; }
+[data-theme='light'] .menu-panel { background: #fff; border-color: rgba(40, 32, 16, .12); box-shadow: 0 18px 45px rgba(40, 32, 16, .18); }
+[data-theme='light'] .menu-panel a { border-bottom-color: rgba(40, 32, 16, .1); color: #1d1b16; }
+[data-theme='light'] .menu-panel a > span { color: #8a6215; }
+[data-theme='light'] .menu-panel .menu-panel-actions a { color: #8a6215; }
+
+/* Section backgrounds */
+[data-theme='light'] .contact-strip,
+[data-theme='light'] .about-section,
+[data-theme='light'] .configuration-section,
+[data-theme='light'] .amenities-section,
+[data-theme='light'] .walkthrough-section { background: #f7f3ea; }
+[data-theme='light'] .highlights-section,
+[data-theme='light'] .location-section,
+[data-theme='light'] .gallery-section,
+[data-theme='light'] .partner-section { background: #efe8d9; }
+
+/* Headings and body copy */
+[data-theme='light'] .section-heading h2,
+[data-theme='light'] .section-heading-light h2,
+[data-theme='light'] .configuration-section .section-heading h2 { color: #1d1b16; }
+[data-theme='light'] .section-heading h2 em,
+[data-theme='light'] .section-heading-light h2 em,
+[data-theme='light'] .configuration-section .section-heading h2 em { color: #8a6215; }
+[data-theme='light'] .section-heading .eyebrow,
+[data-theme='light'] .gallery-heading-row .section-heading .eyebrow { color: #8a6215; }
+[data-theme='light'] .heading-rule,
+[data-theme='light'] .section-heading-light .heading-rule,
+[data-theme='light'] .configuration-section .section-heading .heading-rule { background: #8a6215; }
+[data-theme='light'] .about-copy > p:not(.eyebrow),
+[data-theme='light'] .partner-copy > p { color: #4f4b40; }
+[data-theme='light'] .section-intro { color: #5d584c; }
+
+/* Contact strip and About */
+[data-theme='light'] .contact-card { background: #fff; border-color: rgba(40, 32, 16, .1); color: #1d1b16; }
+[data-theme='light'] .contact-card > span { color: #8a6215; }
+[data-theme='light'] .contact-card:hover { border-color: rgba(138, 98, 21, .55); }
+[data-theme='light'] .about-image-wrap figcaption { background: #fff; border-color: rgba(40, 32, 16, .1); box-shadow: 0 10px 30px rgba(40, 32, 16, .16); color: #8a6215; }
+[data-theme='light'] .about-image-wrap figcaption span:last-child { color: #5d584c; }
+
+/* Highlights */
+[data-theme='light'] .highlight-item { background: #fff; border-color: rgba(40, 32, 16, .1); }
+[data-theme='light'] .highlight-number { background: #f3ecdc; color: #8a6215; }
+[data-theme='light'] .highlight-item h3 { color: #1d1b16; }
+[data-theme='light'] .highlight-item p { color: #6a655a; }
+
+/* Pricing */
+[data-theme='light'] .pricing-table { background: #fff; border-color: rgba(40, 32, 16, .12); }
+[data-theme='light'] .pricing-head { background: #f3ecdc; color: #8a6215; }
+[data-theme='light'] .pricing-row:not(.pricing-head) { border-top-color: rgba(40, 32, 16, .1); }
+[data-theme='light'] .residence-name strong { color: #1d1b16; }
+[data-theme='light'] .area-value { color: #4a463c; }
+[data-theme='light'] .floorplan-link { background: #fff; border-color: rgba(40, 32, 16, .16); color: #2b2820; }
+[data-theme='light'] .floorplan-link:hover { background: #f3ecdc; border-color: rgba(138, 98, 21, .55); color: #8a6215; }
+
+/* Location */
+[data-theme='light'] .location-address { background: #fff; border-color: rgba(40, 32, 16, .1); color: #4a463c; }
+[data-theme='light'] .location-address svg { color: #8a6215; }
+[data-theme='light'] .location-tabs button,
+[data-theme='light'] .gallery-tabs button { background: #fff; border-color: rgba(40, 32, 16, .14); color: #4a463c; }
+[data-theme='light'] .location-tabs button.active,
+[data-theme='light'] .gallery-tabs button.active { background: rgba(138, 98, 21, .1); border-color: rgba(138, 98, 21, .5); color: #8a6215; }
+[data-theme='light'] .location-list li { border-bottom-color: rgba(40, 32, 16, .12); color: #2b2820; }
+[data-theme='light'] .location-list li > span { color: #8a6215; }
+[data-theme='light'] .location-list li svg { color: #8a7d66; }
+
+/* Amenities, slider controls, walkthrough */
+[data-theme='light'] .amenity-extras { color: #6a655a; }
+[data-theme='light'] .carousel-controls > button { background: #fff; border-color: rgba(40, 32, 16, .2); color: #1d1b16; }
+[data-theme='light'] .carousel-controls .carousel-dots button { background-color: rgba(40, 32, 16, .25); }
+[data-theme='light'] .carousel-controls .carousel-dots button.active { background-color: #8a6215; }
+[data-theme='light'] .walkthrough-controls button { border-color: rgba(40, 32, 16, .24); color: #1d1b16; }
+[data-theme='light'] .walkthrough-pagination button { background: rgba(40, 32, 16, .2); }
+[data-theme='light'] .walkthrough-pagination button.active { background: #8a6215; }
+
+/* Partner */
+[data-theme='light'] .partner-point { background: #fff; border-color: rgba(40, 32, 16, .1); }
+[data-theme='light'] .partner-point .partner-point-icon { background: #f3ecdc; color: #8a6215; }
+[data-theme='light'] .partner-point strong { color: #1d1b16; }
+[data-theme='light'] .partner-point p { color: #6a655a; }
+
+/* Form dialogs (image viewers stay dark) */
+[data-theme='light'] .modal-dialog:not(.modal-image) { background: #fff; border-color: rgba(40, 32, 16, .14); color: #1d1b16; }
+[data-theme='light'] .modal-dialog:not(.modal-image) h2 { color: #1d1b16; }
+[data-theme='light'] .modal-dialog:not(.modal-image) > .eyebrow { color: #8a6215; }
+[data-theme='light'] .modal-dialog:not(.modal-image) .modal-description { color: #5d584c; }
+[data-theme='light'] .modal-dialog:not(.modal-image) .modal-close { color: #4a463c; }
+[data-theme='light'] .lead-form input,
+[data-theme='light'] .lead-form select,
+[data-theme='light'] .lead-form textarea { background: #faf7f0; border-color: rgba(40, 32, 16, .22); color: #1d1b16; }
+[data-theme='light'] .lead-form input::placeholder,
+[data-theme='light'] .lead-form textarea::placeholder { color: #8a8578; }
+[data-theme='light'] .lead-form input:focus,
+[data-theme='light'] .lead-form select:focus,
+[data-theme='light'] .lead-form textarea:focus { border-color: #8a6215; }
+[data-theme='light'] .lead-form select option { background: #fff; color: #1d1b16; }
+[data-theme='light'] .consent-row label { color: #4a463c; }
+[data-theme='light'] .form-note { color: #7a7568; }
+[data-theme='light'] .form-success { color: #1d1b16; }
+[data-theme='light'] .form-success p { color: #5d584c; }
+[data-theme='light'] .form-error { border-left-color: #c0392b; color: #b3392a; }
+[data-theme='light'] .form-error a { color: #8a6215; }
+
+/* Hero legibility without any overlay on the photo */
+.hero-copy h1,
+.hero-eyebrow,
+.hero-description { text-shadow: 0 1px 2px rgba(0, 0, 0, .7), 0 2px 12px rgba(0, 0, 0, .65), 0 0 36px rgba(0, 0, 0, .5); }
+.hero-actions .text-button { background: rgba(13, 13, 12, .62); backdrop-filter: blur(6px); }
+.approval { background: rgba(13, 13, 12, .68); }
+
+/* Light theme: the footer stays dark, so keep its logo light; keep the About photo's shade off the caption gap */
+[data-theme='light'] .footer-brand .brand-name,
+[data-theme='light'] .footer-brand .brand-sub { color: #f0eee9; }
+.about-image-wrap::before { bottom: 35px; }
+@media (max-width: 760px) { .about-image-wrap::before { bottom: 28px; } }
+
+/* Enquiry dialog: compact enough that the Submit button is visible on a laptop screen */
+.lead-form-compact textarea { min-height: 64px; }
+.lead-form-compact { gap: 8px; }
+.modal-dialog:not(.modal-image) { padding: 30px 38px 26px; }
+.modal-dialog:not(.modal-image) h2 { font-size: 34px; }
+.modal-description { margin: 10px 0 16px; }
+@media (max-width: 760px) {
+  .modal-dialog:not(.modal-image) { padding: 30px 20px calc(24px + env(safe-area-inset-bottom)); }
+  .modal-dialog:not(.modal-image) h2 { font-size: 30px; }
+}

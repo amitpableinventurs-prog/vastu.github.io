@@ -1,7 +1,17 @@
 import nodemailer from 'nodemailer'
 
+const notConfiguredMessage = 'Email delivery is not configured on this server.'
+
 function singleLine(value) {
   return value.replace(/[\r\n]+/g, ' ').trim()
+}
+
+// Resend (HTTPS, port 443) is preferred: GoDaddy blocks outbound SMTP. Gmail SMTP
+// with an App Password is the fallback for machines that can reach it.
+export function getMailProvider(env = process.env) {
+  if (env.RESEND_API_KEY) return 'resend'
+  if (env.GMAIL_USER && env.GMAIL_APP_PASSWORD) return 'smtp'
+  return null
 }
 
 // Gmail over SSL (465) by default. Some hosts block outbound 465, so SMTP_PORT=587
@@ -24,43 +34,73 @@ export function createGmailTransport(env) {
   })
 }
 
-// Logs in to Gmail without sending anything, so a bad setting shows up in the
+// Checks the SMTP login without sending anything, so a bad setting shows up in the
 // server log at startup. Never includes the password in its result.
 export async function verifyMailSettings(env = process.env, transporter) {
-  const missing = ['GMAIL_USER', 'GMAIL_APP_PASSWORD', 'LEADS_TO_EMAIL'].filter((name) => !env[name])
-  if (missing.length) return { ok: false, reason: `Missing environment variable(s): ${missing.join(', ')}` }
+  if (!env.LEADS_TO_EMAIL) return { ok: false, reason: 'Missing environment variable: LEADS_TO_EMAIL' }
+
+  const provider = getMailProvider(env)
+  if (!provider) {
+    return { ok: false, reason: 'Missing environment variable(s): set RESEND_API_KEY, or GMAIL_USER and GMAIL_APP_PASSWORD' }
+  }
+  // Resend has no side-effect-free check for a send-only key; the first enquiry confirms it.
+  if (provider === 'resend') return { ok: true, provider }
 
   try {
     await (transporter ?? createGmailTransport(env)).verify()
-    return { ok: true }
+    return { ok: true, provider }
   } catch (error) {
-    return { ok: false, reason: (error instanceof Error ? error.message : 'Unknown error').replace(/\s+/g, ' ').slice(0, 300) }
+    return { ok: false, provider, reason: (error instanceof Error ? error.message : 'Unknown error').replace(/\s+/g, ' ').slice(0, 300) }
   }
 }
 
-export async function sendLeadEmail(lead, env = process.env, transporter) {
-  const { GMAIL_USER, GMAIL_APP_PASSWORD, LEADS_TO_EMAIL } = env
-  if (!GMAIL_USER || !GMAIL_APP_PASSWORD || !LEADS_TO_EMAIL) {
-    throw new Error('Gmail delivery is not configured on this server.')
+function buildMessage(lead) {
+  return {
+    subject: `Vastu City enquiry: ${singleLine(lead.name)}`,
+    text: [
+      'New Vastu City Rameshwaram enquiry',
+      '',
+      `Name: ${lead.name}`,
+      `Phone: ${lead.phone}`,
+      `Email: ${lead.email}`,
+      `Enquiry type: ${lead.enquiryType || 'General enquiry'}`,
+      `Message: ${lead.message || 'Not provided'}`,
+      `Consent: ${lead.consent}`,
+      `Lead source: ${lead.leadSource || 'Website'}`,
+      ...(lead.wantsBrochure ? ['Brochure: downloaded after submitting this form'] : []),
+    ].join('\n'),
   }
+}
 
-  const text = [
-    'New Vastu City Rameshwaram enquiry',
-    '',
-    `Name: ${lead.name}`,
-    `Phone: ${lead.phone}`,
-    `Email: ${lead.email}`,
-    `Enquiry type: ${lead.enquiryType || 'General enquiry'}`,
-    `Message: ${lead.message || 'Not provided'}`,
-    `Consent: ${lead.consent}`,
-    `Lead source: ${lead.leadSource || 'Website'}`,
-  ].join('\n')
+async function sendWithResend(lead, env, fetchImpl) {
+  const response = await fetchImpl('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      // onboarding@resend.dev works without DNS setup but only delivers to the Resend account's own address.
+      from: env.MAIL_FROM || 'Vastu City Website <onboarding@resend.dev>',
+      to: [env.LEADS_TO_EMAIL],
+      reply_to: lead.email,
+      ...buildMessage(lead),
+    }),
+    signal: AbortSignal.timeout(15_000),
+  })
+  if (!response.ok) {
+    const detail = (await response.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 200)
+    throw new Error(`Resend rejected the email (HTTP ${response.status}): ${detail}`)
+  }
+}
+
+export async function sendLeadEmail(lead, env = process.env, transporter, fetchImpl = fetch) {
+  const provider = getMailProvider(env)
+  if (!provider || !env.LEADS_TO_EMAIL) throw new Error(notConfiguredMessage)
+
+  if (provider === 'resend') return sendWithResend(lead, env, fetchImpl)
 
   await (transporter ?? createGmailTransport(env)).sendMail({
-    from: `"Vastu City Website" <${GMAIL_USER}>`,
-    to: LEADS_TO_EMAIL,
+    from: `"Vastu City Website" <${env.GMAIL_USER}>`,
+    to: env.LEADS_TO_EMAIL,
     replyTo: lead.email,
-    subject: `Vastu City enquiry: ${singleLine(lead.name)}`,
-    text,
+    ...buildMessage(lead),
   })
 }

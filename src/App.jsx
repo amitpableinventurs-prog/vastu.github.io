@@ -118,9 +118,19 @@ function Icon({ name, size = 20 }) {
   )
 }
 
-function LeadForm({ compact = false, buttonLabel = 'SEND REQUEST', source = 'Hero enquiry form', onFocusChange }) {
+function startDownload(url) {
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'vastu-city-rameshwaram-brochure.pdf'
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+}
+
+function LeadForm({ compact = false, brochure = false, buttonLabel = 'SEND REQUEST', source = 'Hero enquiry form', onFocusChange }) {
   const formId = useId().replaceAll(':', '')
   const [status, setStatus] = useState('idle')
+  const [downloadUrl, setDownloadUrl] = useState('')
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -140,11 +150,30 @@ function LeadForm({ compact = false, buttonLabel = 'SEND REQUEST', source = 'Her
       })
       const result = await response.json()
       if (!response.ok || !result.success) throw new Error('Lead delivery failed')
+      if (brochure) {
+        if (!result.downloadUrl) throw new Error('Brochure link missing')
+        const url = new URL(result.downloadUrl, new URL(leadFormEndpoint, window.location.href)).href
+        setDownloadUrl(url)
+        startDownload(url)
+      }
       setStatus('sent')
       onFocusChange?.(false)
     } catch {
       setStatus('error')
     }
+  }
+
+  if (status === 'sent' && brochure) {
+    return (
+      <div className="form-success form-success-compact" role="status" aria-live="polite">
+        <span className="success-mark"><Icon name="check" size={18} /></span>
+        <div>
+          <strong>Thank you! Your brochure is downloading.</strong>
+          <p>If nothing happens, use the button below.</p>
+          <a className="button button-gold form-download" href={downloadUrl} download="vastu-city-rameshwaram-brochure.pdf">DOWNLOAD AGAIN <Icon name="download" size={16} /></a>
+        </div>
+      </div>
+    )
   }
 
   if (status === 'sent') {
@@ -167,13 +196,17 @@ function LeadForm({ compact = false, buttonLabel = 'SEND REQUEST', source = 'Her
     >
       <input type="hidden" name="project" value="Vastu City Rameshwaram, Indore" />
       <input type="hidden" name="lead_source" value={source} />
+      {brochure && <>
+        <input type="hidden" name="want_brochure" value="yes" />
+        <input type="hidden" name="enquiry_type" value="Request a brochure" />
+      </>}
       <label className="sr-only" htmlFor={`${formId}-name`}>Full name</label>
       <input id={`${formId}-name`} name="name" autoComplete="name" placeholder="Full Name" required />
       <label className="sr-only" htmlFor={`${formId}-phone`}>Phone number</label>
       <input id={`${formId}-phone`} name="phone" type="tel" autoComplete="tel" placeholder="Phone Number" pattern="(?=(?:\D*\d){10})\+?[0-9\(\) \-]{10,20}" title="Enter a valid phone number (at least 10 digits)" required />
       <label className="sr-only" htmlFor={`${formId}-email`}>Email address</label>
       <input id={`${formId}-email`} name="email" type="email" autoComplete="email" placeholder="Email Address" required />
-      {compact && <>
+      {compact && !brochure && <>
         <label className="sr-only" htmlFor={`${formId}-interest`}>What can we help you with?</label>
         <select id={`${formId}-interest`} name="enquiry_type" defaultValue="Pricing and availability">
           <option>Pricing and availability</option>
@@ -250,6 +283,24 @@ function AmenityCarousel({ onOpen }) {
   )
 }
 
+function ThemeToggle({ theme, onToggle, className }) {
+  const next = theme === 'light' ? 'dark' : 'light'
+  return (
+    <button className={className} type="button" onClick={onToggle} aria-label={`Switch to ${next} mode`} title={`Switch to ${next} mode`}>
+      {theme === 'light' ? (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3.5" />
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" />
+        </svg>
+      )}
+    </button>
+  )
+}
+
 function SectionHeading({ eyebrow, title, light = false, intro }) {
   return (
     <div className={`section-heading${light ? ' section-heading-light' : ''}`}>
@@ -271,6 +322,7 @@ function App() {
   const [headerScrolled, setHeaderScrolled] = useState(false)
   const [leadFormFocused, setLeadFormFocused] = useState(false)
   const [activeSection, setActiveSection] = useState('')
+  const [theme, setTheme] = useState(() => (document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'))
   const walkthroughTouchX = useRef(null)
   const progressRef = useRef(null)
 
@@ -333,8 +385,27 @@ function App() {
     }
   }, [menuOpen])
 
-  function openRequest(title) {
-    setModal({ kind: 'form', title })
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#fbf8f2' : '#11110e')
+  }, [theme])
+
+  function toggleTheme() {
+    const next = theme === 'light' ? 'dark' : 'light'
+    setTheme(next)
+    try {
+      localStorage.setItem('vc-theme', next)
+    } catch {
+      // Private browsing: the choice just won't be remembered.
+    }
+  }
+
+  function openRequest(title, options = {}) {
+    setModal({ kind: 'form', title, ...options })
+  }
+
+  function openBrochure() {
+    openRequest('Download the brochure', { brochure: true })
   }
 
   function moveWalkthroughSlide(direction) {
@@ -375,13 +446,9 @@ function App() {
           <a className="header-contact-link" href="tel:+919403892218">Call</a>
           <a className="header-contact-link" href="https://wa.me/919403892218" target="_blank" rel="noreferrer">WhatsApp</a>
           <button className="header-callback" type="button" onClick={() => openRequest('Book a site visit')}>SITE VISIT</button>
-          <span className="header-theme" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-              <circle cx="12" cy="12" r="3.5" />
-              <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" />
-            </svg>
-          </span>
+          <ThemeToggle className="header-theme" theme={theme} onToggle={toggleTheme} />
         </div>
+        <ThemeToggle className="header-theme header-theme-mobile" theme={theme} onToggle={toggleTheme} />
         <button className="menu-toggle" type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
           <Icon name={menuOpen ? 'close' : 'menu'} size={25} />
         </button>
@@ -428,7 +495,7 @@ function App() {
               <h1 id="hero-title">Vastu City<br /><em>Rameshwaram</em></h1>
               <p className="hero-description">A kingdom for the most influential — where your address speaks about your status. 13 towers in Bicholi Mardana, Indore, with amenities that are ready to use today.</p>
               <div className="hero-actions">
-                <a className="button button-gold" href="/vastu-city-rameshwaram-brochure.pdf" download="vastu-city-rameshwaram-brochure.pdf">DOWNLOAD BROCHURE <Icon name="download" size={17} /></a>
+                <button className="button button-gold" type="button" onClick={openBrochure}>DOWNLOAD BROCHURE <Icon name="download" size={17} /></button>
                 <a className="text-button" href="#configuration">VIEW PRICE</a>
               </div>
             </div>
@@ -467,7 +534,7 @@ function App() {
               <SectionHeading eyebrow="ABOUT THE PROJECT" title={<>Here your address <em>speaks</em> about your status</>} />
               <p>Vastu City Rameshwaram (Phase-2) is a gated residential community behind Vidhya Sagar School in Bicholi Mardana, Indore. Spread across 13 towers with five entry gates and wide 9 m–12 m approach roads, it is designed as a true kingdom — vastu-led planning, landscaped gardens and a lifestyle defined by space.</p>
               <p>Unlike promises on paper, the swimming pool, gymnasium, temple and gardens here are already built and ready to use. Images on this page include actual site photographs and project visuals. Approved by SBI, HDFC Home Loans, LIC HFL and all major banks.</p>
-              <a className="link-button button button-gold" href="/vastu-city-rameshwaram-brochure.pdf" download="vastu-city-rameshwaram-brochure.pdf">DOWNLOAD BROCHURE <Icon name="download" size={16} /></a>
+              <button className="link-button button button-gold" type="button" onClick={openBrochure}>DOWNLOAD BROCHURE <Icon name="download" size={16} /></button>
             </div>
             <figure className="about-image-wrap">
               <img src={aboutRender} alt="Vastu City towers and landscaped courtyard" loading="lazy" />
@@ -661,7 +728,7 @@ function App() {
 
       <div className="sticky-actions" aria-label="Quick actions" style={leadFormFocused ? { transform: 'translateY(100%)', opacity: 0, visibility: 'hidden', pointerEvents: 'none' } : undefined}>
         <button type="button" className="sticky-primary" onClick={() => openRequest('Plan your visit to Vastu City')}>REQUEST SITE VISIT</button>
-        <a className="sticky-secondary" href="/vastu-city-rameshwaram-brochure.pdf" download="vastu-city-rameshwaram-brochure.pdf">DOWNLOAD BROCHURE <Icon name="download" size={16} /></a>
+        <button type="button" className="sticky-secondary" onClick={openBrochure}>DOWNLOAD BROCHURE <Icon name="download" size={16} /></button>
       </div>
 
       {modal && (
@@ -678,8 +745,8 @@ function App() {
             ) : (
               <>
                 <p className="eyebrow">VASTU CITY RAMESHWARAM · INDORE</p><h2 id="modal-title">{modal.title}</h2>
-                <p className="modal-description">Leave your details and a Happy Move advisor will get back to you with the information you need.</p>
-                <LeadForm compact buttonLabel="SEND MY REQUEST" source={modal.title} onFocusChange={setLeadFormFocused} />
+                <p className="modal-description">{modal.brochure ? 'Enter your details and the Vastu City Rameshwaram brochure will download straight away.' : 'Leave your details and a Happy Move advisor will get back to you with the information you need.'}</p>
+                <LeadForm compact brochure={modal.brochure} buttonLabel={modal.brochure ? 'DOWNLOAD BROCHURE' : 'SEND MY REQUEST'} source={modal.title} onFocusChange={setLeadFormFocused} />
               </>
             )}
             {modal.kind === 'image' && <p className="image-modal-caption">{modal.title}<span>VASTU CITY RAMESHWARAM · INDORE</span></p>}
