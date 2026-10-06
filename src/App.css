@@ -2286,3 +2286,8 @@ html[data-theme='light'] { background: #f7f3ea; color-scheme: light; }
 .configuration-plan { background: #00756e; border: 0; border-radius: 22px; cursor: zoom-in; display: block; overflow: hidden; padding: 0; width: 100%; }
 .configuration-plan img { display: block; height: auto; transition: transform 300ms ease; width: 100%; }
 .configuration-plan:hover img { transform: scale(1.03); }
+
+/* Header navigation links: a little larger so they are easy to read */
+.desktop-nav a { font-size: 13px; letter-spacing: .08em; }
+@media (max-width: 1279px) { .desktop-nav a { font-size: 12px; } }
+@media (max-width: 1100px) { .desktop-nav a { font-size: 11px; letter-spacing: .06em; } }
