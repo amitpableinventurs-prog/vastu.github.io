@@ -2252,3 +2252,37 @@ html[data-theme='light'] { background: #f7f3ea; color-scheme: light; }
     inset: -64px -30px -60px -30px;
   }
 }
+
+/* Contact cards live in the footer now (moved from under the hero) */
+.footer-contact-strip { border-bottom: 1px solid rgba(255, 255, 255, .09); margin-bottom: 32px; padding-bottom: 32px; }
+.footer-contact-strip .contact-card { background: rgba(255, 255, 255, .04); border-color: rgba(255, 255, 255, .1); }
+.footer-contact-strip .contact-card:hover { border-color: rgba(215, 174, 88, .5); }
+.footer-contact-strip .contact-card strong { overflow-wrap: anywhere; }
+[data-theme='light'] .site-footer .contact-card { background: rgba(255, 255, 255, .04); border-color: rgba(255, 255, 255, .1); color: #f0eee9; }
+[data-theme='light'] .site-footer .contact-card > span { color: var(--gold-light); }
+[data-theme='light'] .site-footer .contact-card:hover { border-color: rgba(215, 174, 88, .5); }
+@media (max-width: 760px) {
+  .footer-contact-strip { margin-bottom: 26px; padding-bottom: 26px; }
+}
+
+/* Footer: RERA number, address and disclaimer (no email shown anywhere on the site) */
+.footer-details { display: flex; flex-direction: column; gap: 14px; list-style: none; margin: 0; padding: 0; }
+.footer-details li { align-items: flex-start; color: rgba(255, 255, 255, .8); display: flex; font-size: 15px; gap: 12px; line-height: 1.5; }
+.footer-details svg { color: var(--gold-light); flex: 0 0 auto; margin-top: 2px; }
+.footer-fineprint { border-top: 1px solid rgba(255, 255, 255, .1); margin-top: 32px; padding-top: 24px; }
+.footer-fineprint p { color: rgba(255, 255, 255, .6); font-size: 13px; line-height: 1.8; margin: 0 0 12px; max-width: 940px; }
+.footer-fineprint strong { color: rgba(255, 255, 255, .88); }
+.footer-fineprint .footer-copyright { color: rgba(255, 255, 255, .5); margin: 16px 0 0; }
+@media (min-width: 641px) {
+  .footer-contact-strip .contact-strip-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .footer-details { grid-column: 1 / -1; }
+  .footer-fineprint { margin-top: 26px; }
+  .footer-fineprint p { font-size: 14px; }
+}
+
+/* Pricing: the typical floor plan is shown directly (tap to enlarge) */
+.configuration-plan { background: #00756e; border: 0; border-radius: 22px; cursor: zoom-in; display: block; overflow: hidden; padding: 0; width: 100%; }
+.configuration-plan img { display: block; height: auto; transition: transform 300ms ease; width: 100%; }
+.configuration-plan:hover img { transform: scale(1.03); }

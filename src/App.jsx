@@ -22,6 +22,7 @@ import fourBhkPlanImage from './assets/optimized/plan-4bhk.webp'
 
 const headerImages = [heroRender, heroGarden, heroDusk]
 const leadFormEndpoint = import.meta.env.VITE_LEAD_API_URL || '/api/leads'
+const currentYear = new Date().getFullYear()
 
 const highlights = [
   ['RERA Approved', 'P-OTH-23-3881'],
@@ -206,22 +207,11 @@ function LeadForm({ compact = false, brochure = false, buttonLabel = 'SEND REQUE
       <input id={`${formId}-phone`} name="phone" type="tel" autoComplete="tel" placeholder="Phone Number" pattern="(?=(?:\D*\d){10})\+?[0-9\(\) \-]{10,20}" title="Enter a valid phone number (at least 10 digits)" required />
       <label className="sr-only" htmlFor={`${formId}-email`}>Email address</label>
       <input id={`${formId}-email`} name="email" type="email" autoComplete="email" placeholder="Email Address" required />
-      {compact && !brochure && <>
-        <label className="sr-only" htmlFor={`${formId}-interest`}>What can we help you with?</label>
-        <select id={`${formId}-interest`} name="enquiry_type" defaultValue="Pricing and availability">
-          <option>Pricing and availability</option>
-          <option>Book a site visit</option>
-          <option>Request a brochure</option>
-          <option>Other enquiry</option>
-        </select>
-        <label className="sr-only" htmlFor={`${formId}-message`}>Message (optional)</label>
-        <textarea id={`${formId}-message`} name="message" placeholder="Message (optional)" rows="3" />
-      </>}
       <div className="consent-row">
         <input id={`${formId}-consent`} name="consent" type="checkbox" value="Agreed to be contacted" required />
         <label htmlFor={`${formId}-consent`}>I agree to be contacted by Happy Move about this enquiry.</label>
       </div>
-      {status === 'error' && <p className="form-error" role="alert">We couldn’t send this just now. Please try again or <a href="mailto:reethappymove19@gmail.com">email our team</a>.</p>}
+      {status === 'error' && <p className="form-error" role="alert">We couldn’t send this just now. Please try again or call us on <a href="tel:+919403892218">+91 94038 92218</a>.</p>}
       <button className="button button-gold form-submit" type="submit" disabled={status === 'sending'}>
         {status === 'sending' ? 'SENDING...' : buttonLabel}<Icon name="arrow" size={17} />
       </button>
@@ -511,23 +501,6 @@ function App() {
           </div>
         </section>
 
-        <section className="contact-strip" aria-label="Contact options">
-          <div className="contact-strip-grid page-wrap">
-            <a className="contact-card" href="tel:+919403892218">
-              <span>CALL US</span>
-              <strong>+91 94038 92218</strong>
-            </a>
-            <a className="contact-card" href="mailto:reethappymove19@gmail.com">
-              <span>EMAIL</span>
-              <strong>reethappymove19@gmail.com</strong>
-            </a>
-            <button className="contact-card" type="button" onClick={() => openRequest('Book a site visit')}>
-              <span>SITE VISIT</span>
-              <strong>Book a personalized walkthrough</strong>
-            </button>
-          </div>
-        </section>
-
         <section className="about-section section-pad" id="about">
           <div className="about-grid page-wrap">
             <div className="about-copy">
@@ -583,9 +556,11 @@ function App() {
                 </div>
               </div>
               <div className="configuration-visual">
-                <img className="configuration-photo" src={bedroomImage} alt="Illustrative bedroom interior" loading="lazy" />
+                <button className="configuration-plan" type="button" onClick={() => setModal({ kind: 'floorplan', title: 'Typical residence floor plan' })} aria-label="View the typical floor plan full size">
+                  <img src={threeBhkPlanImage} alt="Typical 3 BHK residence floor plan" loading="lazy" />
+                </button>
                 <button className="floorplan-link" type="button" onClick={() => setModal({ kind: 'floorplan', title: 'Typical residence floor plan' })}>
-                  VIEW FLOOR PLAN
+                  VIEW FULL SIZE
                 </button>
               </div>
             </div>
@@ -705,6 +680,18 @@ function App() {
       </main>
 
       <footer className="site-footer">
+        <section className="footer-contact-strip" aria-label="Contact options">
+          <div className="contact-strip-grid page-wrap">
+            <a className="contact-card" href="tel:+919403892218">
+              <span>CALL US</span>
+              <strong>+91 94038 92218</strong>
+            </a>
+            <button className="contact-card" type="button" onClick={() => openRequest('Book a site visit')}>
+              <span>SITE VISIT</span>
+              <strong>Book a personalized walkthrough</strong>
+            </button>
+          </div>
+        </section>
         <div className="footer-main page-wrap">
           <div className="footer-about">
             <a className="brand footer-brand" href="#top" aria-label="Vastu City Rameshwaram home"><span className="brand-name">VASTU CITY</span><span className="brand-sub">RAMESHWARAM</span></a>
@@ -718,11 +705,15 @@ function App() {
               ['Location', '#location'],
             ].map(([label, href]) => <a key={href} href={href}>{label}</a>)}
           </nav>
-          <div className="footer-contact">
-            <a href="tel:+919403892218">+91 94038 92218</a>
-            <a href="mailto:reethappymove19@gmail.com">reethappymove19@gmail.com</a>
-            <span>Indore, Madhya Pradesh</span>
-          </div>
+          <ul className="footer-details">
+            <li><Icon name="badge" size={20} /><span>MP RERA No: P-OTH-23-3881</span></li>
+            <li><Icon name="pin" size={20} /><span>Behind Vidhya Sagar School, Bicholi Mardana, Indore</span></li>
+          </ul>
+        </div>
+        <div className="footer-fineprint page-wrap" id="disclaimer">
+          <p><strong>Disclaimer:</strong> This is the official landing page of Happy Move, an authorized channel partner for Vastu City Rameshwaram. This is not the developer’s official website.</p>
+          <p>The contents are purely conceptual and have no legal binding. The builder reserves the right to amend layouts, plans, dimensions, elevations, colour schemes, specifications and amenities without notice. Subject to Indore jurisdiction. Images are for representation; some are artistic renders.</p>
+          <p className="footer-copyright">© {currentYear} Happy Move. All rights reserved.</p>
         </div>
       </footer>
 

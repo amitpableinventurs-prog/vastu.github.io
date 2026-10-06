@@ -144,3 +144,15 @@ test('Resend needs a recipient and reports a missing one as not configured', asy
 test('startup check accepts a Resend key without calling any API', async () => {
   assert.deepEqual(await verifyMailSettings(resendEnv), { ok: true, provider: 'resend' })
 })
+
+test('leaves out the enquiry type and message lines when the form does not ask for them', async () => {
+  const { calls, fetchImpl } = (() => {
+    const calls = []
+    return { calls, fetchImpl: async (url, init) => { calls.push(JSON.parse(init.body)); return new Response('{}', { status: 200 }) } }
+  })()
+  const { name, phone, email, consent, leadSource } = lead
+  await sendLeadEmail({ name, phone, email, consent, leadSource }, resendEnv, undefined, fetchImpl)
+
+  assert.match(calls[0].text, /Name: Test Visitor/)
+  assert.doesNotMatch(calls[0].text, /Enquiry type|Message:|Not provided|General enquiry/)
+})
