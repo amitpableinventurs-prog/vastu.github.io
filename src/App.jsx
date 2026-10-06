@@ -30,12 +30,12 @@ const highlights = [
   ['Ready Amenities', 'Pool, gym, temple, gardens'],
   ['5 Entry Gates', 'Secure gated community'],
   ['12 m Approach Road', 'Plus 9 m internal roads'],
-  ['1660 sq.ft. Carpet', 'Spacious typical plan'],
+  ['2300 sq.ft. Built-up', 'Spacious typical plan'],
   ['Next to School', 'Behind Vidhya Sagar School'],
   ['Bank Approved', 'SBI · HDFC · LIC HFL'],
 ]
 
-const highlightIcons = ['check', 'towers', 'amenities', 'neighbourhood', 'arrowUp', 'carpet', 'school', 'bank']
+const highlightIcons = ['check', 'towers', 'amenities', 'neighbourhood', 'arrowUp', 'area', 'school', 'bank']
 
 const locationDetails = {
   Schools: ['Vidhya Sagar School', 'Pragya School', 'Agrawal Public School'],
@@ -74,7 +74,7 @@ const gallery = {
   ],
   'Floor plans': [
     { title: 'Master site plan', image: sitePlanImage, plan: true },
-    { title: 'Typical 3 BHK · 2300 sq.ft.', image: threeBhkPlanImage, plan: true },
+    { title: 'Typical 3 BHK · 2300 sq.ft. Built-up', image: threeBhkPlanImage, plan: true },
     { title: 'Typical 4 BHK · 3906 sq.ft.', image: fourBhkPlanImage, plan: true },
   ],
 }
@@ -103,7 +103,7 @@ function Icon({ name, size = 20 }) {
     neighbourhood: <><path d="m3 11 9-7 9 7" /><path d="M5 10v10h14V10" /><path d="M9 20v-5h6v5" /></>,
     towers: <><path d="M5 20V7h5v13" /><path d="M14 20V3h5v17" /><path d="M3 20h18" /><path d="M7.5 10h.01M7.5 13h.01M7.5 16h.01M16.5 6h.01M16.5 9h.01M16.5 12h.01M16.5 15h.01" /></>,
     amenities: <><path d="M4 8c2.5-4 5.5 4 8 0s5.5 4 8 0" /><path d="M4 13c2.5-4 5.5 4 8 0s5.5 4 8 0" /><path d="M4 18c2.5-4 5.5 4 8 0s5.5 4 8 0" /></>,
-    carpet: <><path d="m12 3 9 9-9 9-9-9 9-9Z" /><path d="m9 9 6 6M15 9l-6 6" /></>,
+    area: <><path d="m12 3 9 9-9 9-9-9 9-9Z" /><path d="m9 9 6 6M15 9l-6 6" /></>,
     bank: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="4" /><path d="M12 7v10M7 12h10" /></>,
     badge: <><path d="M12 3 14.5 5.5 18 5.2l.8 3.4 2.7 2.3-2.7 2.3-.8 3.4-3.5-.3L12 19l-2.5-2.7-3.5.3-.8-3.4-2.7-2.3 2.7-2.3.8-3.4 3.5.3L12 3Z" /><path d="m8.5 11.5 2.2 2.2 4.8-5" /></>,
     mail: <><rect x="3" y="5" width="18" height="14" rx="1.5" /><path d="m4 7 8 6 8-6" /></>,
@@ -544,7 +544,7 @@ function App() {
                   <div className="pricing-row pricing-head" role="row"><span role="columnheader">TYPE</span><span role="columnheader">AREA (SQ.FT.)</span><span role="columnheader">PRICE</span></div>
                   <div className="pricing-row" role="row">
                     <div className="residence-name" role="cell"><strong>Premium Residence (Typical Plan)</strong></div>
-                    <span className="area-value" role="cell">1660 Carpet</span>
+                    <span className="area-value" role="cell">2300 Built-up</span>
                     <div className="price-action" role="cell"><button className="button button-gold" type="button" onClick={() => openRequest('Ask about the premium residence')}><span>PRICE ON<br />REQUEST</span></button></div>
                   </div>
                   <div className="pricing-row" role="row">
@@ -728,7 +728,7 @@ function App() {
             <button className="modal-close" type="button" aria-label="Close dialog" onClick={() => setModal(null)}><Icon name="close" size={21} /></button>
             {modal.kind === 'image' ? <div className={`modal-image-frame${modal.plan ? ' is-plan' : ''}`}><img src={modal.image} alt={modal.title} /></div> : modal.kind === 'floorplan' ? (
               <>
-                <p className="eyebrow">TYPICAL 3 BHK FLOOR PLAN · 2300 SQ. FT.</p><h2 id="modal-title">{modal.title}</h2>
+                <p className="eyebrow">TYPICAL 3 BHK FLOOR PLAN · 2300 SQ. FT. BUILT-UP</p><h2 id="modal-title">{modal.title}</h2>
                 <p className="modal-description">Typical plan includes lobby, living room, kitchen with store, bedrooms with dressing and toilets, wash area and balcony.</p>
                 <div className="modal-floorplan-scroll"><img className="modal-floorplan-image" src={threeBhkPlanImage} alt="Typical 3 BHK residence floor plan" /></div>
                 <button className="button button-gold modal-cta" type="button" onClick={() => openRequest('Ask about the typical residence')}>ASK ABOUT THIS PLAN <Icon name="arrow" size={16} /></button>
