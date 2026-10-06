@@ -30,7 +30,7 @@ const highlights = [
   ['Ready Amenities', 'Pool, gym, temple, gardens'],
   ['5 Entry Gates', 'Secure gated community'],
   ['12 m Approach Road', 'Plus 9 m internal roads'],
-  ['2300 sq.ft. Built-up', 'Spacious typical plan'],
+  ['2300 – 4000 sq.ft. Built-up', '3 BHK & 4 BHK residences'],
   ['Next to School', 'Behind Vidhya Sagar School'],
   ['Bank Approved', 'SBI · HDFC · LIC HFL'],
 ]
@@ -43,6 +43,31 @@ const locationDetails = {
   'Leisure & shopping': ['Treasure Fantasy Mall', 'Local shopping plaza', 'Neighbourhood cafes'],
   Neighbourhood: ['Bicholi Mardana', 'Peaceful residential setting', 'Five gated entries'],
 }
+
+const residencePlans = [
+  {
+    id: '3bhk',
+    label: '3 BHK',
+    name: '3 BHK Premium Residence (Typical Plan)',
+    area: '2300 Built-up',
+    image: threeBhkPlanImage,
+    alt: 'Typical 3 BHK residence floor plan',
+    title: 'Typical 3 BHK floor plan',
+    eyebrow: 'TYPICAL 3 BHK FLOOR PLAN · 2300 SQ. FT. BUILT-UP',
+    ask: 'Ask about the 3 BHK premium residence',
+  },
+  {
+    id: '4bhk',
+    label: '4 BHK',
+    name: '4 BHK Premium Residence (Typical Plan)',
+    area: '4000 Built-up',
+    image: fourBhkPlanImage,
+    alt: 'Typical 4 BHK residence floor plan',
+    title: 'Typical 4 BHK floor plan',
+    eyebrow: 'TYPICAL 4 BHK FLOOR PLAN',
+    ask: 'Ask about the 4 BHK premium residence',
+  },
+]
 
 const amenities = [
   { title: 'Swimming Pool', image: poolImage },
@@ -75,7 +100,7 @@ const gallery = {
   'Floor plans': [
     { title: 'Master site plan', image: sitePlanImage, plan: true },
     { title: 'Typical 3 BHK · 2300 sq.ft. Built-up', image: threeBhkPlanImage, plan: true },
-    { title: 'Typical 4 BHK · 3906 sq.ft.', image: fourBhkPlanImage, plan: true },
+    { title: 'Typical 4 BHK floor plan', image: fourBhkPlanImage, plan: true },
   ],
 }
 
@@ -394,6 +419,10 @@ function App() {
     setModal({ kind: 'form', title, ...options })
   }
 
+  function openPlan(plan) {
+    setModal({ kind: 'floorplan', title: plan.title, image: plan.image, alt: plan.alt, eyebrow: plan.eyebrow, ask: plan.ask })
+  }
+
   function openBrochure() {
     openRequest('Download the brochure', { brochure: true })
   }
@@ -542,11 +571,13 @@ function App() {
               <div className="configuration-table-wrap">
                 <div className="pricing-table" role="table" aria-label="Residence configurations and pricing">
                   <div className="pricing-row pricing-head" role="row"><span role="columnheader">TYPE</span><span role="columnheader">AREA (SQ.FT.)</span><span role="columnheader">PRICE</span></div>
-                  <div className="pricing-row" role="row">
-                    <div className="residence-name" role="cell"><strong>Premium Residence (Typical Plan)</strong></div>
-                    <span className="area-value" role="cell">2300 Built-up</span>
-                    <div className="price-action" role="cell"><button className="button button-gold" type="button" onClick={() => openRequest('Ask about the premium residence')}><span>PRICE ON<br />REQUEST</span></button></div>
-                  </div>
+                  {residencePlans.map((plan) => (
+                    <div className="pricing-row" role="row" key={plan.id}>
+                      <div className="residence-name" role="cell"><strong>{plan.name}</strong></div>
+                      <span className="area-value" role="cell">{plan.area}</span>
+                      <div className="price-action" role="cell"><button className="button button-gold" type="button" onClick={() => openRequest(plan.ask)}><span>PRICE ON<br />REQUEST</span></button></div>
+                    </div>
+                  ))}
                   <div className="pricing-row" role="row">
                     <div className="residence-name" role="cell"><strong>Other Configurations</strong></div>
                     <span className="area-value" role="cell">On Request</span>
@@ -555,13 +586,17 @@ function App() {
                   <div className="pricing-footnote"><p>Typical plan includes lobby, living room, kitchen with store, bedrooms with dressing &amp; toilets, wash area and a 12'10" × 6'5" balcony.</p></div>
                 </div>
               </div>
-              <div className="configuration-visual">
-                <button className="configuration-plan" type="button" onClick={() => setModal({ kind: 'floorplan', title: 'Typical residence floor plan' })} aria-label="View the typical floor plan full size">
-                  <img src={threeBhkPlanImage} alt="Typical 3 BHK residence floor plan" loading="lazy" />
-                </button>
-                <button className="floorplan-link" type="button" onClick={() => setModal({ kind: 'floorplan', title: 'Typical residence floor plan' })}>
-                  VIEW FULL SIZE
-                </button>
+              <div className="configuration-visual configuration-plans">
+                {residencePlans.map((plan) => (
+                  <div className="configuration-plan-card" key={plan.id}>
+                    <button className="configuration-plan" type="button" onClick={() => openPlan(plan)} aria-label={`View the ${plan.label} floor plan full size`}>
+                      <img src={plan.image} alt={plan.alt} loading="lazy" />
+                    </button>
+                    <button className="floorplan-link" type="button" onClick={() => openPlan(plan)}>
+                      VIEW {plan.label} FULL SIZE
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -728,10 +763,10 @@ function App() {
             <button className="modal-close" type="button" aria-label="Close dialog" onClick={() => setModal(null)}><Icon name="close" size={21} /></button>
             {modal.kind === 'image' ? <div className={`modal-image-frame${modal.plan ? ' is-plan' : ''}`}><img src={modal.image} alt={modal.title} /></div> : modal.kind === 'floorplan' ? (
               <>
-                <p className="eyebrow">TYPICAL 3 BHK FLOOR PLAN · 2300 SQ. FT. BUILT-UP</p><h2 id="modal-title">{modal.title}</h2>
+                <p className="eyebrow">{modal.eyebrow}</p><h2 id="modal-title">{modal.title}</h2>
                 <p className="modal-description">Typical plan includes lobby, living room, kitchen with store, bedrooms with dressing and toilets, wash area and balcony.</p>
-                <div className="modal-floorplan-scroll"><img className="modal-floorplan-image" src={threeBhkPlanImage} alt="Typical 3 BHK residence floor plan" /></div>
-                <button className="button button-gold modal-cta" type="button" onClick={() => openRequest('Ask about the typical residence')}>ASK ABOUT THIS PLAN <Icon name="arrow" size={16} /></button>
+                <div className="modal-floorplan-scroll"><img className="modal-floorplan-image" src={modal.image} alt={modal.alt} /></div>
+                <button className="button button-gold modal-cta" type="button" onClick={() => openRequest(modal.ask)}>ASK ABOUT THIS PLAN <Icon name="arrow" size={16} /></button>
               </>
             ) : (
               <>
