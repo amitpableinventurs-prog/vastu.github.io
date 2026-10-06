@@ -2234,3 +2234,21 @@ html[data-theme='light'] { background: #f7f3ea; color-scheme: light; }
   .modal-dialog:not(.modal-image) { padding: 30px 20px calc(24px + env(safe-area-inset-bottom)); }
   .modal-dialog:not(.modal-image) h2 { font-size: 30px; }
 }
+
+/* Hero: a soft dark glow only behind the text block, so the copy is clearly readable
+   while the photograph itself stays unfiltered. */
+.hero-copy { isolation: isolate; position: relative; }
+.hero-copy::before {
+  background: radial-gradient(ellipse 62% 50% at 42% 50%, rgba(6, 7, 8, .72) 0%, rgba(6, 7, 8, .56) 42%, rgba(6, 7, 8, 0) 100%);
+  content: '';
+  inset: -120px -120px -110px -90px;
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+@media (max-width: 900px) {
+  .hero-copy::before {
+    background: radial-gradient(ellipse 72% 50% at 50% 50%, rgba(6, 7, 8, .72) 0%, rgba(6, 7, 8, .54) 45%, rgba(6, 7, 8, 0) 100%);
+    inset: -64px -30px -60px -30px;
+  }
+}
