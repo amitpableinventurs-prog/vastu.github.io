@@ -48,7 +48,7 @@ const amenities = [
   { title: 'Swimming Pool', image: poolImage },
   { title: 'Gymnasium', image: gymImage },
   { title: 'Landscaped Gardens', image: gardenImage },
-  { title: 'Temple', image: templeImage },
+  { title: 'Temple', image: templeImage, note: 'Project visual' },
   { title: "Kids' Play Area", image: playImage, note: 'Project visual' },
   { title: 'Residential Towers', image: towersImage },
 ]
@@ -66,7 +66,7 @@ const gallery = {
   'Interior / amenities': [
     { title: 'Gymnasium', image: gymImage },
     { title: 'Swimming pool', image: poolImage },
-    { title: 'Temple', image: templeImage },
+    { title: 'Temple (illustrative)', image: templeImage },
     { title: 'Bedroom (illustrative)', image: bedroomImage },
     { title: 'Living area (illustrative)', image: livingImage },
     { title: "Kids' play area", image: playImage },
